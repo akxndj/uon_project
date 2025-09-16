@@ -1,24 +1,55 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import Navbar from "./components/Navbar"; // Navbar
+
+// Pages
+import Home from "./pages/Home";
+import EventDetails from "./pages/EventDetails";
+import Registration from "./pages/Registration";
+import Login from "./pages/Login";
+import UserDashboard from "./pages/UserDashboard";
+import OrganizerDashboard from "./pages/OrganizerDashboard";
+import AdminDashboard from "./pages/AdminDashboard";
+import AdminEventsPage from "./pages/AdminEventsPage";
+import AdminUsersPage from "./pages/AdminUsersPage";
+import Register from "./pages/RegisterUser";
+import AdminEventDetails from "./pages/AdminEventDetails";
+import CreateEvent from "./pages/CreateEvent";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Navbar /> {/* Navbar appears on all pages */}
+      <Routes>
+        {/* Register page */}
+        <Route path="/register-account" element={<Register />} />
+
+        {/* Default route → Login page */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/login" element={<Login />} />
+
+        {/* Admin routes */}
+        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/admin/events" element={<AdminEventsPage />} />
+        <Route path="/admin/users" element={<AdminUsersPage />} />
+        <Route path="/admin/events/:id" element={<AdminEventDetails />} />
+
+        {/* User routes */}
+        <Route path="/home" element={<Home />} />
+        <Route path="/events/:id" element={<EventDetails />} />
+        <Route path="/register/:id" element={<Registration />} />
+        <Route path="/user" element={<UserDashboard />} />
+
+        {/* Organizer routes */}
+        <Route path="/organizer/create-event" element={<CreateEvent />} />
+        <Route path="/organizer" element={<OrganizerDashboard />} />
+      </Routes>
+    </Router>
   );
 }
 

@@ -1,0 +1,146 @@
+.navbar {
+  background-color: #2e7d32;
+  color: white;
+}
+
+/* Admin dashboard main container */
+.admin-dashboard {
+  padding: 20px;
+  text-align: center;
+}
+
+.admin-title {
+  font-size: 28px;
+  font-weight: bold;
+  color: #2e7d32;
+  margin-bottom: 20px;
+}
+
+/* Section block */
+.admin-section {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  margin: 20px auto;
+  max-width: 900px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+
+.admin-section h2 {
+  font-size: 20px;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+/* Card list */
+.admin-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Card item */
+.admin-card {
+  background: #f9f9f9;
+  border-radius: 8px;
+  padding: 15px 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.admin-card p {
+  margin: 0;
+  font-size: 15px;
+  color: #333;
+}
+
+/* Button group */
+.admin-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+/* Base button */
+.admin-btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  background: #e0e0e0;
+  transition: background 0.2s;
+}
+
+.admin-btn:hover {
+  background: #ccc;
+}
+
+/* Primary button */
+.admin-btn.primary {
+  background: #2e7d32;
+  color: white;
+}
+
+.admin-btn.primary:hover {
+  background: #2e7d32;
+}
+
+/* Danger button */
+.admin-btn.danger {
+  background: #d32f2f;
+  color: white;
+}
+
+.admin-btn.danger:hover {
+  background: #9a0007;
+}
+
+/* Create button */
+.admin-btn.create {
+  margin-top: 15px;
+  background: #2e7d32;
+  color: white;
+}
+
+.admin-btn.create:hover {
+  background: #1b5e20;
+}
+
+/* Two-column layout */
+.admin-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Left and right */
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* On small screens switch to single column */
+@media (max-width: 900px) {
+  .admin-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* View All button */
+.view-all-btn {
+  display: inline-block;
+  margin-top: 15px; /* Space from above cards */
+  padding: 8px 16px;
+  background-color: #2e7d32;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.view-all-btn:hover {
+  background-color: #2e7d32;
+}

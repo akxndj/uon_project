@@ -1,38 +1,60 @@
+/* App main container */
 .App {
   text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+}
+
+/* Hide React default logo */
+.App-logo {
+  display: none;
+}
+
+/* Main content area */
+.App-header {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  justify-content: flex-start;
+  padding: 20px;
+  font-size: 18px;
+  color: #000;
+  background: transparent; /* Background handled by body */
 }
 
+/* Default link style */
 .App-link {
-  color: #61dafb;
+  color: #1976d2; /* Newcastle blue */
+  text-decoration: none;
+  font-weight: bold;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.App-link:hover {
+  text-decoration: underline;
+}
+
+/* Background image */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-image: url("/NUspaceFeature.jpg"); /* Background image */
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  position: relative;
+}
+
+/* Background overlay layer */
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.3); /* Adjust opacity 0.3–0.5 */
+  pointer-events: none;
+  z-index: -1;
 }

@@ -1,0 +1,166 @@
+.navbar {
+  background-color: #f57c00; /* Orange */
+  color: white;
+}
+
+/* Organizer dashboard main container */
+.organizer-dashboard {
+  padding: 20px;
+  text-align: center;
+}
+
+.organizer-title {
+  font-size: 28px;
+  font-weight: bold;
+  color: #f57c00;
+  margin-bottom: 20px;
+}
+
+/* Section block */
+.organizer-section {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+
+.organizer-section h2 {
+  font-size: 20px;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+/* Card list */
+.organizer-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Card item */
+.organizer-card {
+  background: #f9f9f9;
+  border-radius: 8px;
+  padding: 15px 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.organizer-card p {
+  margin: 0;
+  font-size: 15px;
+  color: #333;
+}
+
+/* Button group */
+.organizer-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+/* Base button */
+.organizer-btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  background: #e0e0e0;
+  transition: background 0.2s;
+}
+
+.organizer-btn:hover {
+  background: #ccc;
+}
+
+/* Primary button */
+.organizer-btn.primary {
+  background: #f57c00;
+  color: white;
+}
+
+.organizer-btn.primary:hover {
+  background: #f57c00;
+}
+
+/* Danger button */
+.organizer-btn.danger {
+  background: #d32f2f;
+  color: white;
+}
+
+.organizer-btn.danger:hover {
+  background: #9a0007;
+}
+
+/* Create button */
+.organizer-btn.create {
+  background: #f57c00;
+  color: white;
+}
+
+.organizer-btn.create:hover {
+  background: #f57c00;
+}
+
+/* CreateEvent page styles */
+
+/* Orange title */
+.form-card h1 {
+  color: #f57c00;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Orange form button */
+.form-btn {
+  background-color: #f57c00 !important;
+  color: white !important;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.form-btn:hover {
+  background-color: #e66900;
+}
+
+/* Orange link */
+.form-link {
+  color: #f57c00 !important;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.form-link:hover {
+  text-decoration: underline;
+}
+
+/* Create event button */
+.organizer-create-btn {
+  background-color: #f57c00;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: bold;
+  text-decoration: none;
+  display: inline-block;
+  transition: background 0.2s;
+}
+
+.organizer-create-btn:hover {
+  background-color: #e66900;
+}
