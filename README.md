@@ -68,3 +68,70 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+// ======================= Frontend Tasks =======================
+//
+// Overall requirements:
+// - Build role-based frontend (User / Organizer / Admin)
+// - Implement navigation and page routing
+// - Create clean and consistent UI with CSS
+// - Connect to backend APIs once available (replace mock data)
+//
+// ----------------------- User Side -----------------------
+// Tasks:
+// - Home page: display list of events
+// - Event details page: show event info + default image if none
+// - Registration page: allow students to register
+// - User dashboard: show registered events, cancel registration
+//
+// Completed:
+// - EventDetails page with mock data + fallback image
+// - UserDashboard with registered events, cancel + view buttons
+// - Registration page (basic mock-up)
+//
+// ----------------------- Organizer Side -----------------------
+// Tasks:
+// - Organizer dashboard: show organizer’s own events
+// - Create new event page: form for event creation
+// - Buttons for Edit / Delete events
+//
+// Completed:
+// - OrganizerDashboard with mock events
+// - CreateEvent page (form fully working on frontend, redirects after submit)
+//
+// ----------------------- Admin Side -----------------------
+// Tasks:
+// - Admin dashboard: show events and users (limit 5 each)
+// - View all events/users pages
+// - Event detail page (for admin view)
+// - User management: change role, delete user
+// - Event management: edit, delete
+//
+// Completed:
+// - AdminDashboard with events + users preview
+// - AdminEventsPage + AdminEventDetails
+// - AdminUsersPage
+//
+// ----------------------- UI / CSS -----------------------
+// Tasks:
+// - Consistent navbar per role (User=blue, Organizer=orange, Admin=green)
+// - Card layout for events and users
+// - Buttons styled for primary / danger / create actions
+//
+// Completed:
+// - CSS base styles done (forms, dashboards, cards, buttons)
+//
+// ----------------------- Pending -----------------------
+// 1. Login & Registration page title color issue
+// - Currently displayed as orange (inherited from Organizer CSS)
+// - Should be blue
+// 2. User registration form needs extra fields
+// - Add "First Name" and "Last Name"
+// - Currently only has name/email/studentId/password
+// 3. Replace mock data with real data
+// - All events/users/registrations are hardcoded mock data
+// - Should be replaced with API calls (GET/POST/PUT/DELETE)
+// 4. Delete / Edit buttons not functional
+// - Currently, all delete and edit buttons do nothing
+// - Need to add proper edit pages and delete logic (API integration)
+// ==============================================================
