@@ -20,6 +20,7 @@ import AdminUsersPage from "./pages/AdminUsersPage";
 import Register from "./pages/RegisterUser";
 import AdminEventDetails from "./pages/AdminEventDetails";
 import CreateEvent from "./pages/CreateEvent";
+import OrganizerEventDetail from "./pages/OrganizerEventDetail";
 
 function App() {
   return (
@@ -48,6 +49,10 @@ function App() {
         {/* Organizer routes */}
         <Route path="/organizer/create-event" element={<CreateEvent />} />
         <Route path="/organizer" element={<OrganizerDashboard />} />
+        <Route
+          path="/organizer/events/:id"
+          element={<OrganizerEventDetail />}
+        />
       </Routes>
     </Router>
   );

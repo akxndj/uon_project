@@ -36,7 +36,7 @@ function CreateEvent() {
   };
 
   return (
-    <div className="form-container">
+    <div className="create-event-page">
       <div className="form-card">
         <h1>Create New Event</h1>
 
@@ -128,14 +128,14 @@ function CreateEvent() {
           </div>
 
           {/* Submit button */}
-          <button type="submit" className="form-btn">
+          <button type="submit" className="organizer-action-btn">
             Create Event
           </button>
         </form>
 
         {/* Link back to dashboard */}
-        <div style={{ marginTop: "15px" }}>
-          <Link to="/organizer" className="form-link">
+        <div style={{ marginTop: "15px", textAlign: "center" }}>
+          <Link to="/organizer" className="organizer-action-btn">
             ← Back to Dashboard
           </Link>
         </div>
