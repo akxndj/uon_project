@@ -1,17 +1,52 @@
-/* App main container */
+/* ===================== App Main Container ===================== */
 .App {
+  position: relative;
   text-align: center;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
 }
 
-/* Hide React default logo */
+/* ===================== Background Image + Overlay ===================== */
+.App::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("/NUspaceFeature.jpg");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  z-index: 0;
+}
+
+.App::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.7);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.App > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* ===================== Hide React Logo ===================== */
 .App-logo {
   display: none;
 }
 
-/* Main content area */
+/* ===================== Main Content Area ===================== */
 .App-header {
   flex: 1;
   display: flex;
@@ -21,10 +56,10 @@
   padding: 20px;
   font-size: 18px;
   color: #000;
-  background: transparent; /* Background handled by body */
+  background: transparent;
 }
 
-/* Default link style */
+/* ===================== Default Link Style ===================== */
 .App-link {
   color: #1976d2; /* Newcastle blue */
   text-decoration: none;
@@ -33,28 +68,4 @@
 
 .App-link:hover {
   text-decoration: underline;
-}
-
-/* Background image */
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background-image: url("/NUspaceFeature.jpg"); /* Background image */
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-  position: relative;
-}
-
-/* Background overlay layer */
-body::after {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(255, 255, 255, 0.3); /* Adjust opacity 0.3–0.5 */
-  pointer-events: none;
-  z-index: -1;
 }

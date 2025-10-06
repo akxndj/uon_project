@@ -1,11 +1,12 @@
 import React from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import "../styles/admin.css";
 
 function AdminEventDetails() {
   const { id } = useParams();
+  const navigate = useNavigate();
 
-  // Fake data (can be replaced with API later)
+  // Fake event data (mock)
   const events = [
     {
       id: 1,
@@ -25,15 +26,30 @@ function AdminEventDetails() {
     },
   ];
 
-  // Find event by id from URL
+  // Find the event by id
   const event = events.find((e) => e.id.toString() === id);
+
+  // Handle edit navigation
+  const handleEdit = () => {
+    navigate(`/admin/edit-event/${id}`);
+  };
+
+  // Handle delete confirmation
+  const handleDelete = () => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this event?"
+    );
+    if (confirmDelete) {
+      alert("Event deleted successfully!");
+      navigate("/admin");
+    }
+  };
 
   // If no event found
   if (!event) {
     return (
       <div className="admin-dashboard">
         <h2>Event not found</h2>
-        {/* Button to go back */}
         <Link to="/admin" className="view-all-btn">
           Back to Dashboard
         </Link>
@@ -44,7 +60,7 @@ function AdminEventDetails() {
   return (
     <div className="admin-dashboard">
       <div className="admin-section">
-        {/* Show event name */}
+        {/* Event details */}
         <h1 className="admin-title">{event.name}</h1>
         <p>
           <strong>Date:</strong> {event.date}
@@ -59,13 +75,17 @@ function AdminEventDetails() {
           <strong>Description:</strong> {event.description}
         </p>
 
-        {/* Buttons for edit and delete */}
+        {/* Action buttons */}
         <div className="admin-buttons" style={{ marginTop: "20px" }}>
-          <button className="admin-btn">Edit</button>
-          <button className="admin-btn danger">Delete</button>
+          <button className="admin-btn" onClick={handleEdit}>
+            Edit
+          </button>
+          <button className="admin-btn danger" onClick={handleDelete}>
+            Delete
+          </button>
         </div>
 
-        {/* Button to go back to dashboard */}
+        {/* Back button */}
         <div style={{ textAlign: "center", marginTop: "20px" }}>
           <Link to="/admin" className="view-all-btn">
             Back to Dashboard

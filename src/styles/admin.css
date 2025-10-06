@@ -65,6 +65,7 @@
 
 /* Base button */
 .admin-btn {
+  display: inline-block; /* 让 Link 看起来像按钮 */
   padding: 6px 12px;
   border: none;
   border-radius: 6px;
@@ -72,11 +73,15 @@
   font-size: 14px;
   font-weight: bold;
   background: #e0e0e0;
+  color: black; /* 修正字体颜色 */
+  text-decoration: none; /* 去掉蓝色下划线 */
   transition: background 0.2s;
 }
 
 .admin-btn:hover {
   background: #ccc;
+  color: black; /* 悬停时仍保持黑色 */
+  text-decoration: none;
 }
 
 /* Primary button */
@@ -143,4 +148,108 @@
 
 .view-all-btn:hover {
   background-color: #2e7d32;
+}
+
+/* ==================== Admin Menu Page ==================== */
+.admin-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+}
+
+.admin-menu {
+  display: flex;
+  justify-content: center;
+  gap: 50px;
+  flex-wrap: wrap;
+}
+
+.admin-menu-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  width: 280px;
+  height: 260px;
+  text-align: center;
+  text-decoration: none;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  padding: 20px;
+}
+
+.admin-menu-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+}
+
+.admin-menu-img {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  margin-bottom: 20px;
+}
+
+.admin-menu-card h2 {
+  color: #2e7d32;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+/* ==================== Admin Edit Event Page ==================== */
+.admin-edit-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 40px 0;
+}
+
+/* Edit Event Card */
+.admin-edit-page .form-card {
+  width: 100%;
+  max-width: 500px;
+  background: white;
+  padding: 30px 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Title */
+.admin-edit-page .form-card h1 {
+  color: #2e7d32;
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+/* Textarea */
+.admin-edit-page .form-group textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  resize: none;
+  font-family: inherit;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+/* Green action button */
+.admin-action-btn {
+  background-color: #2e7d32;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  display: inline-block;
+  text-decoration: none;
+}
+
+.admin-action-btn:hover {
+  background-color: #1b5e20;
 }

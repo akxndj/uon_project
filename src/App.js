@@ -21,6 +21,8 @@ import Register from "./pages/RegisterUser";
 import AdminEventDetails from "./pages/AdminEventDetails";
 import CreateEvent from "./pages/CreateEvent";
 import OrganizerEventDetail from "./pages/OrganizerEventDetail";
+import EditEvent from "./pages/EditEvent";
+import AdminEditEvent from "./pages/AdminEditEvent";
 
 function App() {
   return (
@@ -45,6 +47,7 @@ function App() {
         <Route path="/events/:id" element={<EventDetails />} />
         <Route path="/register/:id" element={<Registration />} />
         <Route path="/user" element={<UserDashboard />} />
+        <Route path="/admin/edit-event/:id" element={<AdminEditEvent />} />
 
         {/* Organizer routes */}
         <Route path="/organizer/create-event" element={<CreateEvent />} />
@@ -53,6 +56,7 @@ function App() {
           path="/organizer/events/:id"
           element={<OrganizerEventDetail />}
         />
+        <Route path="/organizer/edit-event/:id" element={<EditEvent />} />
       </Routes>
     </Router>
   );

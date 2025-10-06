@@ -4,9 +4,12 @@ import "../styles/user.css";
 
 function Register() {
   // Form state
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [studentId, setStudentId] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
@@ -15,8 +18,25 @@ function Register() {
     e.preventDefault();
 
     try {
+      // Collect all registration data
+      const userData = {
+        firstName,
+        lastName,
+        username,
+        email,
+        studentId,
+        phone,
+        password,
+      };
+
+      console.log("Registering user:", userData);
+
       // TODO: Replace with real API call
-      console.log("Registering user:", { name, email, studentId, password });
+      // await fetch("/api/register", {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify(userData),
+      // });
 
       // Simulate successful registration
       alert("Registration successful! Please login.");
@@ -34,16 +54,41 @@ function Register() {
 
         {/* Register form */}
         <form onSubmit={handleRegister}>
+          {/* First Name */}
           <div className="form-group">
-            <label>Name:</label>
+            <label>First Name:</label>
             <input
               type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
               required
             />
           </div>
 
+          {/* Last Name */}
+          <div className="form-group">
+            <label>Last Name:</label>
+            <input
+              type="text"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              required
+            />
+          </div>
+
+          {/* Username */}
+          <div className="form-group">
+            <label>Username:</label>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Choose a unique username"
+              required
+            />
+          </div>
+
+          {/* Email */}
           <div className="form-group">
             <label>Email:</label>
             <input
@@ -54,6 +99,7 @@ function Register() {
             />
           </div>
 
+          {/* Student ID */}
           <div className="form-group">
             <label>Student ID:</label>
             <input
@@ -64,6 +110,19 @@ function Register() {
             />
           </div>
 
+          {/* Phone */}
+          <div className="form-group">
+            <label>Phone Number:</label>
+            <input
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="e.g. 0412 345 678"
+              required
+            />
+          </div>
+
+          {/* Password */}
           <div className="form-group">
             <label>Password:</label>
             <input
