@@ -119,8 +119,6 @@
 }
 
 /* ==================== Create/Edit Event Pages ==================== */
-
-/* 页面结构分离：仅编辑或创建页面垂直居中 */
 .organizer-edit-page,
 .organizer-create-page {
   display: flex;
@@ -232,16 +230,14 @@
   background-color: #9a0007;
 }
 
-/* ========== Edit Event 页面专用居中修正 ========== */
 .organizer-edit-page {
   display: flex;
-  justify-content: center; /* 水平居中 */
-  align-items: flex-start; /* 顶部对齐，防止太居中时太空 */
+  justify-content: center;
+  align-items: flex-start;
   min-height: 100vh;
-  padding: 60px 0; /* 增加垂直空隙 */
+  padding: 60px 0;
 }
 
-/* 让表单卡片始终在中间 */
 .organizer-edit-page .form-card {
   background: #fff;
   padding: 30px 40px;
@@ -249,10 +245,9 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   width: 100%;
   max-width: 600px;
-  margin: 0 auto; /* 关键：让卡片水平居中 */
+  margin: 0 auto;
 }
 
-/* 标题保持居中橙色 */
 .organizer-edit-page .form-card h1 {
   text-align: center;
   color: #f57c00;
@@ -260,9 +255,8 @@
   margin-bottom: 25px;
 }
 
-/* ==================== Save Changes 按钮 ==================== */
 .organizer-save-btn {
-  background-color: #f57c00;        /* 橙色主题 */
+  background-color: #f57c00;
   color: white;
   border: none;
   border-radius: 8px;
@@ -273,7 +267,7 @@
   display: block;
   width: 100%;
   max-width: 200px;
-  margin: 25px auto 0 auto;         /* 居中显示 */
+  margin: 25px auto 0 auto;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transition: all 0.2s ease-in-out;
 }
@@ -281,7 +275,7 @@
 .organizer-save-btn:hover {
   background-color: #e66900;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-  transform: translateY(-2px);      /* 鼠标悬停微微上浮 */
+  transform: translateY(-2px);
 }
 
 .organizer-save-btn:active {

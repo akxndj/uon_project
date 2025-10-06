@@ -65,7 +65,7 @@
 
 /* Base button */
 .admin-btn {
-  display: inline-block; /* 让 Link 看起来像按钮 */
+  display: inline-block;
   padding: 6px 12px;
   border: none;
   border-radius: 6px;
@@ -73,14 +73,14 @@
   font-size: 14px;
   font-weight: bold;
   background: #e0e0e0;
-  color: black; /* 修正字体颜色 */
-  text-decoration: none; /* 去掉蓝色下划线 */
+  color: black;
+  text-decoration: none;
   transition: background 0.2s;
 }
 
 .admin-btn:hover {
   background: #ccc;
-  color: black; /* 悬停时仍保持黑色 */
+  color: black;
   text-decoration: none;
 }
 
