@@ -5,7 +5,7 @@ import "../styles/organizer.css";
 function OrganizerDashboard() {
   const navigate = useNavigate();
 
-  // Local event data (can be replaced with API data later)
+  // Local event data
   const [events, setEvents] = useState([
     { id: 1, name: "Career Workshop", participants: 80 },
     { id: 2, name: "Tech Meetup", participants: 45 },

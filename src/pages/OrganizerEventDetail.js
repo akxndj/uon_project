@@ -6,7 +6,7 @@ function OrganizerEventDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  // Fake data (replace with API later)
+  // Fake data
   const events = [
     {
       id: 1,
