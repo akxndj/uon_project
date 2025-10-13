@@ -1,26 +1,93 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "../styles/admin.css";
+import events from "../data/events";
+import { getRegistrationCount } from "../utils/registrationStorage";
+import { useToast } from "../context/ToastContext";
+import { useModal } from "../context/ModalContext";
 
 function AdminEventsPage() {
-  // Initial mock event data
-  const [events, setEvents] = useState([
-    { id: 1, name: "Orientation Week", participants: 120 },
-    { id: 2, name: "Career Workshop", participants: 80 },
-    { id: 3, name: "AI Seminar", participants: 150 },
-    { id: 4, name: "Hackathon", participants: 200 },
-    { id: 5, name: "Networking Night", participants: 60 },
-    { id: 6, name: "Research Showcase", participants: 90 },
-  ]);
+  const { push } = useToast();
+  const { confirm } = useModal();
+  const [eventList, setEvents] = useState(
+    events.map((event) => ({
+      ...event,
+      participants: getRegistrationCount(event.id),
+    }))
+  );
+
+  useEffect(() => {
+    const refreshParticipants = () => {
+      setEvents((current) =>
+        current.map((event) => ({
+          ...event,
+          participants: getRegistrationCount(event.id),
+        }))
+      );
+    };
+
+    refreshParticipants();
+    if (typeof window === "undefined") return undefined;
+    const handleStorage = ({ key }) => {
+      if (key === "eventRegistrations") {
+        refreshParticipants();
+      }
+    };
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
+  }, []);
 
   // Handle delete confirmation
-  const handleDelete = (id) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this event?"
-    );
-    if (confirmDelete) {
-      setEvents(events.filter((event) => event.id !== id));
-      alert("Event deleted successfully!");
+  const handleDelete = async (id) => {
+    const targetEvent = eventList.find((event) => event.id === id);
+    const approved = await confirm({
+      title: `Remove ${targetEvent?.name || "this event"}?`,
+      description:
+        "The event will be archived for all attendees and hidden from discovery.",
+      confirmLabel: "Delete event",
+      cancelLabel: "Cancel",
+      tone: "danger",
+      size: "md",
+      render: () =>
+        targetEvent ? (
+          <div className="modal-details">
+            <p>
+              You are about to remove <strong>{targetEvent.name}</strong>.
+            </p>
+            <ul className="modal-details__list">
+              <li>
+                <span>Date:</span> {targetEvent.date}
+              </li>
+              <li>
+                <span>Location:</span> {targetEvent.location}
+              </li>
+              <li>
+                <span>Capacity:</span> {targetEvent.capacity}
+              </li>
+              <li>
+                <span>Registered:</span> {targetEvent.participants}
+              </li>
+            </ul>
+          </div>
+        ) : null,
+    });
+
+    if (!approved) return;
+
+    let deletedName = "";
+    setEvents((current) => {
+      const target = current.find((event) => event.id === id);
+      if (target) {
+        deletedName = target.name;
+      }
+      return current.filter((event) => event.id !== id);
+    });
+    if (deletedName) {
+      push({
+        title: "Event removed",
+        message: `"${deletedName}" is no longer listed.`,
+        tone: "info",
+      });
     }
   };
 
@@ -31,11 +98,11 @@ function AdminEventsPage() {
 
         {/* Event List */}
         <div className="admin-list">
-          {events.map((event) => (
+          {eventList.map((event) => (
             <div className="admin-card" key={event.id}>
               <p>
                 <strong>{event.name}</strong> — Participants:{" "}
-                {event.participants}
+                {event.participants}/{event.capacity}
               </p>
 
               <div className="admin-buttons">

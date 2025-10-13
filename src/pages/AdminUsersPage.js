@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "../styles/admin.css";
+import { useToast } from "../context/ToastContext";
+import { useModal } from "../context/ModalContext";
 
 function AdminUsersPage() {
   // Fake data (can be replaced with API later)
@@ -12,6 +14,8 @@ function AdminUsersPage() {
     { id: 5, name: "Ethan", role: "organizer" },
     { id: 6, name: "Fiona", role: "student" },
   ]);
+  const { push } = useToast();
+  const { confirm } = useModal();
 
   // Handle role change
   const handleRoleChange = (id, newRole) => {
@@ -19,19 +23,40 @@ function AdminUsersPage() {
       user.id === id ? { ...user, role: newRole } : user
     );
     setUsers(updatedUsers);
-    alert(`User role updated to "${newRole}" successfully!`);
+    const updatedUser = updatedUsers.find((user) => user.id === id);
+    push({
+      title: "Role updated",
+      message: `${updatedUser?.name || "User"} is now ${newRole}.`,
+      tone: "success",
+    });
   };
 
   // Handle delete
-  const handleDelete = (id) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this user?"
-    );
-    if (confirmDelete) {
-      const updatedUsers = users.filter((user) => user.id !== id);
-      setUsers(updatedUsers);
-      alert("User deleted successfully!");
-    }
+  const handleDelete = async (id) => {
+    const target = users.find((user) => user.id === id);
+    const approved = await confirm({
+      title: "Delete user?",
+      body: (
+        <p>
+          Are you sure you want to remove{" "}
+          <strong>{target?.name || "this user"}</strong>? They will lose access
+          immediately.
+        </p>
+      ),
+      confirmLabel: "Delete user",
+      cancelLabel: "Cancel",
+      tone: "danger",
+    });
+
+    if (!approved) return;
+
+    const updatedUsers = users.filter((user) => user.id !== id);
+    setUsers(updatedUsers);
+    push({
+      title: "User deleted",
+      message: target ? `${target.name} has been removed.` : "User removed.",
+      tone: "info",
+    });
   };
 
   return (

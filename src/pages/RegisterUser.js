@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "../styles/user.css";
+import { useToast } from "../context/ToastContext";
 
 function Register() {
   // Form state
@@ -12,6 +13,7 @@ function Register() {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const { push } = useToast();
 
   // Handle register form submit
   const handleRegister = async (e) => {
@@ -39,11 +41,19 @@ function Register() {
       // });
 
       // Simulate successful registration
-      alert("Registration successful! Please login.");
+      push({
+        title: "Account created",
+        message: "Please sign in to continue.",
+        tone: "success",
+      });
       navigate("/login");
     } catch (error) {
       console.error("Registration failed:", error);
-      alert("Failed to register. Try again.");
+      push({
+        title: "Registration failed",
+        message: "Please try again.",
+        tone: "danger",
+      });
     }
   };
 

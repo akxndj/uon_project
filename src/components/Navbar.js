@@ -1,133 +1,123 @@
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useMemo, useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 import schoolLogo from "../assets/schoolLogo.png";
+import "./Navbar.css";
 
-function Navbar() {
-  const [role, setRole] = useState(localStorage.getItem("role"));
+const navConfig = {
+  guest: [
+    { label: "Login", to: "/login" },
+    { label: "Register", to: "/register-account" },
+  ],
+  user: [
+    { label: "Home", to: "/home" },
+    { label: "My Events", to: "/user" },
+  ],
+  organizer: [
+    { label: "Dashboard", to: "/organizer" },
+    { label: "My Events", to: "/organizer" },
+  ],
+  admin: [
+    { label: "Dashboard", to: "/admin" },
+    { label: "Events", to: "/admin/events" },
+    { label: "Users", to: "/admin/users" },
+  ],
+};
+
+const roleThemes = {
+  guest: "site-header--guest",
+  user: "site-header--user",
+  organizer: "site-header--organizer",
+  admin: "site-header--admin",
+};
+
+const Navbar = () => {
   const navigate = useNavigate();
+  const [role, setRole] = useState(() => localStorage.getItem("role"));
 
-  // keep checking role in localStorage (so nav updates when login/logout)
   useEffect(() => {
-    const checkRole = () => setRole(localStorage.getItem("role"));
-    const interval = setInterval(checkRole, 500);
-    return () => clearInterval(interval);
+    const syncRole = () => setRole(localStorage.getItem("role"));
+    syncRole();
+    window.addEventListener("storage", syncRole);
+    window.addEventListener("focus", syncRole);
+    return () => {
+      window.removeEventListener("storage", syncRole);
+      window.removeEventListener("focus", syncRole);
+    };
   }, []);
 
-  // logout: clear role + go back to login page
+  const links = useMemo(() => {
+    if (!role) return navConfig.guest;
+    return navConfig[role] || navConfig.guest;
+  }, [role]);
+
   const handleLogout = () => {
     localStorage.removeItem("role");
     setRole(null);
     navigate("/login");
   };
 
-  // navbar background color depends on role
-  const getNavStyle = (role) => {
-    let bgColor = "#1976d2"; // default blue
-    if (role === "admin") bgColor = "#2e7d32"; // green for admin
-    if (role === "organizer") bgColor = "#f57c00"; // orange for organizer
-
-    return {
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
-      padding: "5px 15px",
-      backgroundColor: bgColor,
-      color: "white",
-    };
-  };
+  const headerClass = `site-header ${
+    role ? roleThemes[role] : roleThemes.guest
+  }`;
 
   return (
-    <nav style={getNavStyle(role)}>
-      {/* Logo and app name */}
-      <div style={styles.brand}>
-        <img src={schoolLogo} alt="logo" style={{ height: "50px" }} />
-        <h2 style={styles.logoText}>UoN Event Platform</h2>
+    <header className={headerClass}>
+      <div className="page-shell site-header__inner">
+        <div className="site-header__brand">
+          <img src={schoolLogo} alt="University of Newcastle" />
+          <div className="site-header__branding-copy">
+            <span className="brand-kicker">University of Newcastle</span>
+            <span className="brand-name">Event Platform</span>
+          </div>
+        </div>
+
+        <nav className="site-header__nav" aria-label="Primary navigation">
+          {links.map((link) => (
+            <NavLink
+              key={link.to}
+              to={link.to}
+              className={({ isActive }) =>
+                isActive
+                  ? "site-header__link site-header__link--active"
+                  : "site-header__link"
+              }
+            >
+              {link.label}
+            </NavLink>
+          ))}
+        </nav>
+
+        <div className="site-header__actions">
+          {role === "organizer" && (
+            <button
+              type="button"
+              className="btn btn--primary"
+              onClick={() => navigate("/organizer/create-event")}
+            >
+              Create Event
+            </button>
+          )}
+          <button
+            type="button"
+            className="icon-btn"
+            aria-label="Notifications"
+            title="Notifications"
+          >
+            🔔
+          </button>
+          {role ? (
+            <button
+              type="button"
+              className="btn btn--ghost"
+              onClick={handleLogout}
+            >
+              Logout
+            </button>
+          ) : null}
+        </div>
       </div>
-
-      {/* Different links based on role */}
-      <div style={styles.links}>
-        {!role && (
-          <>
-            <Link to="/login" style={styles.link}>
-              Login
-            </Link>
-            <Link to="/register-account" style={styles.link}>
-              Register
-            </Link>
-          </>
-        )}
-
-        {role === "user" && (
-          <>
-            <Link to="/home" style={styles.link}>
-              Home
-            </Link>
-            <Link to="/user" style={styles.link}>
-              User Dashboard
-            </Link>
-            <button onClick={handleLogout} style={styles.logout}>
-              Logout
-            </button>
-          </>
-        )}
-
-        {role === "organizer" && (
-          <>
-            <Link to="/organizer" style={styles.link}>
-              Organizer Dashboard
-            </Link>
-            <button onClick={handleLogout} style={styles.logout}>
-              Logout
-            </button>
-          </>
-        )}
-
-        {role === "admin" && (
-          <>
-            <Link to="/admin" style={styles.link}>
-              Admin Dashboard
-            </Link>
-            <button onClick={handleLogout} style={styles.logout}>
-              Logout
-            </button>
-          </>
-        )}
-      </div>
-    </nav>
+    </header>
   );
-}
-
-// some css styles
-const styles = {
-  brand: {
-    display: "flex",
-    alignItems: "center",
-    gap: "10px",
-  },
-  logoImg: {
-    height: "80px",
-    width: "80px",
-  },
-  logoText: {
-    margin: 0,
-  },
-  links: {
-    display: "flex",
-    gap: "15px",
-    alignItems: "center",
-  },
-  link: {
-    color: "white",
-    textDecoration: "none",
-  },
-  logout: {
-    background: "transparent",
-    border: "1px solid white",
-    color: "white",
-    padding: "5px 10px",
-    cursor: "pointer",
-    borderRadius: "4px",
-  },
 };
 
 export default Navbar;

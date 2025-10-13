@@ -1,0 +1,178 @@
+import defaultPic from "../assets/defaultPic.png";
+
+// Shared mock event catalogue used across the app.
+const events = [
+  {
+    id: "1",
+    name: "Orientation Week",
+    date: "2025-02-15",
+    location: "Callaghan Campus",
+    description:
+      "Welcome new students to the campus, explore facilities and student life.",
+    eligibility: "All new students",
+    fee: "Free",
+    includes: "Campus tour, welcome pack, lunch voucher",
+    image: defaultPic,
+    capacity: 200,
+    startTime: "2025-02-15T09:00",
+    endTime: "2025-02-15T15:00",
+    contact: {
+      name: "Student Services",
+      email: "orientation@uon.edu.au",
+    },
+    agenda: [
+      { time: "09:00", title: "Welcome & Check-in" },
+      { time: "10:00", title: "Campus Tours" },
+      { time: "12:00", title: "Lunch & Clubs Expo" },
+      { time: "13:30", title: "Student Life Briefing" },
+    ],
+  },
+  {
+    id: "2",
+    name: "Career Workshop",
+    date: "2025-03-05",
+    location: "Online (Zoom)",
+    description: "Learn resume building, networking, and interview skills.",
+    eligibility: "All students interested in career prep",
+    fee: "Free",
+    includes: "Resume templates, mock interview session",
+    image: defaultPic,
+    capacity: 120,
+    startTime: "2025-03-05T17:00",
+    endTime: "2025-03-05T19:30",
+    contact: {
+      name: "Careers Team",
+      email: "careers@uon.edu.au",
+    },
+    agenda: [
+      { time: "17:00", title: "Welcome & Introductions" },
+      { time: "17:20", title: "Resume Deep Dive" },
+      { time: "18:10", title: "Networking Break" },
+      { time: "18:30", title: "Mock Interviews" },
+    ],
+  },
+  {
+    id: "3",
+    name: "AI Seminar",
+    date: "2025-04-10",
+    location: "NUspace Building",
+    description: "Talks by experts about the latest AI trends and research.",
+    eligibility: "All students & staff",
+    fee: "$10 (includes refreshments)",
+    includes: "Seminar materials, networking session, refreshments",
+    image: defaultPic,
+    capacity: 150,
+    startTime: "2025-04-10T14:00",
+    endTime: "2025-04-10T17:30",
+    contact: {
+      name: "School of Engineering",
+      email: "ai-seminar@uon.edu.au",
+    },
+    agenda: [
+      { time: "14:00", title: "Keynote: Future of AI" },
+      { time: "15:15", title: "Panel Discussion" },
+      { time: "16:00", title: "Networking & Refreshments" },
+    ],
+  },
+  {
+    id: "4",
+    name: "Hackathon",
+    date: "2025-05-20",
+    location: "Maker Space",
+    description:
+      "Collaborate on innovative solutions in a 24-hour coding challenge.",
+    eligibility: "STEM students",
+    fee: "$15 per team",
+    includes: "Meals, swag, access to mentors",
+    image: defaultPic,
+    capacity: 80,
+    startTime: "2025-05-20T08:00",
+    endTime: "2025-05-21T08:00",
+    contact: {
+      name: "Innovation Hub",
+      email: "hackathon@uon.edu.au",
+    },
+    agenda: [
+      { time: "08:00", title: "Team Check-in" },
+      { time: "09:00", title: "Kick-off Briefing" },
+      { time: "12:00", title: "Mentor Sessions" },
+      { time: "20:00", title: "Midnight Pizza Run" },
+      { time: "07:00", title: "Final Presentations" },
+    ],
+  },
+  {
+    id: "5",
+    name: "Networking Night",
+    date: "2025-06-12",
+    location: "City Campus Atrium",
+    description:
+      "Meet industry partners and alumni for an evening of networking.",
+    eligibility: "All students",
+    fee: "$5 (includes refreshments)",
+    includes: "Refreshments, name badge, connection board",
+    image: defaultPic,
+    capacity: 90,
+    startTime: "2025-06-12T18:00",
+    endTime: "2025-06-12T21:00",
+    contact: {
+      name: "Alumni Office",
+      email: "alumni@uon.edu.au",
+    },
+    agenda: [
+      { time: "18:00", title: "Doors Open & Refreshments" },
+      { time: "18:45", title: "Industry Lightning Talks" },
+      { time: "19:30", title: "Networking Mixer" },
+    ],
+  },
+  {
+    id: "6",
+    name: "Research Showcase",
+    date: "2025-07-03",
+    location: "Great Hall",
+    description: "Discover cutting-edge projects from postgraduate students.",
+    eligibility: "All students & staff",
+    fee: "Free",
+    includes: "Exhibition access, Q&A sessions",
+    image: defaultPic,
+    capacity: 110,
+    startTime: "2025-07-03T10:00",
+    endTime: "2025-07-03T16:00",
+    contact: {
+      name: "Graduate Studies",
+      email: "researchshowcase@uon.edu.au",
+    },
+    agenda: [
+      { time: "10:00", title: "Poster Session" },
+      { time: "12:30", title: "Lab Tours" },
+      { time: "14:00", title: "Awards & Closing" },
+    ],
+  },
+  {
+    id: "7",
+    name: "Tech Meetup",
+    date: "2025-04-15",
+    location: "NUspace",
+    description: "Networking for students and professionals.",
+    eligibility: "Computer science and engineering students",
+    fee: "Free",
+    includes: "Panel discussion, pizza, networking lounge",
+    image: defaultPic,
+    capacity: 60,
+    startTime: "2025-04-15T18:00",
+    endTime: "2025-04-15T20:30",
+    contact: {
+      name: "Tech Society",
+      email: "techmeetup@uon.edu.au",
+    },
+    agenda: [
+      { time: "18:00", title: "Welcome & Pizza" },
+      { time: "18:30", title: "Panel: Emerging Tech" },
+      { time: "19:15", title: "Open Networking" },
+    ],
+  },
+];
+
+export const getEventById = (id) =>
+  events.find((event) => event.id.toString() === id.toString());
+
+export default events;

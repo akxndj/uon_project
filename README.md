@@ -135,3 +135,58 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 // - Currently, all delete and edit buttons do nothing
 // - Need to add proper edit pages and delete logic (API integration)
 // ==============================================================
+
+## Recent Frontend Updates
+
+- Introduced global design system (Inter/Playfair typography, theme tokens, refreshed header with role-aware CTA).
+- Added reusable toast notifications and modal confirmation system replacing `alert`/`confirm` flows.
+- Centralised mock event catalogue (`src/data/events.js`) with capacity, agenda, and contact metadata plus localStorage-backed registration utilities.
+- Reworked Home/Browse page with filterable event cards, capacity badges, and shared `EventCard` component.
+- Redesigned Event Details page: hero banner, sticky summary sidebar, tabbed content (Overview/Agenda/Contact), share + calendar actions, mobile register CTA.
+- Overhauled Organizer Dashboard: hero summary, KPI tiles, segmented event cards (upcoming/past) with live capacity indicators.
+- Built shared `OrganizerEventWizard` powering both create/edit flows (basics → schedule → ticketing → communications → review) with validation and agenda editing.
+- Updated User Dashboard: splits upcoming vs past registrations, modern cards with capacity meters, and adds share / add-to-calendar / cancel actions.
+- Refreshed styling across organizer/user views to align with the new design language.
+
+## UI Refinement Roadmap
+
+### Phase 0 — Prep Work
+- [ ] Audit current CSS/asset usage and remove unused styles.
+- [ ] Capture screenshots of current Home, Event Detail, Registration, and dashboard screens for before/after comparison.
+- [ ] Finalise typography and color palette (e.g., Inter/Playfair + UoN navy/gold) and place assets in `src/assets/brand/`.
+
+### Phase 1 — Design System & Global Layout
+- [x] Centralise tokens for color, typography, spacing, and shadows in a theme file.
+- [x] Rebuild the global header with role-aware navigation, notification icon, and organiser “Create Event” CTA.
+- [x] Establish responsive container/grid utilities for consistent page paddings and widths.
+- [x] Introduce reusable toast and modal components to replace browser `alert`/`confirm`.
+
+### Phase 2 — Event Discovery & Detail Experience
+- [x] Redesign the Home/Browse view into filterable event cards with capacity/status badges and metadata icons.
+- [x] Create reusable `EventCard` and `EventStatusBadge` components shared across lists and dashboards.
+- [x] Rework the Event Detail page with a hero banner, sticky summary sidebar (date, venue, capacity meter, CTA), and tabbed content (Overview, Agenda, Contact).
+- [x] Add share + calendar actions and a sticky mobile “Register” bar.
+
+### Phase 3 — Organizer Tools
+- [x] Refresh the Organizer Dashboard with metric tiles (Events Live, Registrations Today), segmented event lists, and quick actions.
+- [x] Convert Create Event into a guided wizard (Basics → Schedule & Venue → Ticketing/Capacity → Communications → Review) with contextual tips.
+- [x] Update Edit Event to mirror the wizard layout and show live registration/capacity metrics.
+- [ ] Build ticket management tables/cards supporting waitlists, price edits, and exports.
+
+### Phase 4 — Attendee Journey
+- [x] Split “My Registrations” into Upcoming/Past views with capacity progress bars and share/calendar actions.
+- [ ] Enhance registration success with QR code, calendar buttons, related events, and organiser contact info.
+- [ ] Implement a mobile “event pass” view optimised for on-site check-in.
+- [ ] Add contextual help and support entry points within the user dashboard.
+
+### Phase 5 — Communication & Engagement
+- [ ] Create an organiser communication hub for templates, scheduling, and delivery stats.
+- [ ] Surface automated notification settings (reminders, updates, thank-you notes) per event.
+- [ ] Add an in-app notification center for attendees/admins highlighting upcoming events and changes.
+- [ ] Integrate analytics widgets (attendance conversion, ticket sales pace) into the admin dashboard.
+
+### Phase 6 — Polish & Accessibility
+- [ ] Introduce light/dark mode toggle while maintaining contrast compliance.
+- [ ] Ensure all interactive components include focus states, ARIA labels, and keyboard navigation.
+- [ ] Add subtle micro-interactions (hover states, success animations) without hurting performance.
+- [ ] Conduct a UX review with representative organiser/attendee users and iterate on findings.

@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import "../styles/admin.css";
+import { useToast } from "../context/ToastContext";
 
 function AdminEditEvent() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { push } = useToast();
 
   const [eventData, setEventData] = useState({
     name: "",
@@ -15,6 +17,7 @@ function AdminEditEvent() {
     fee: "",
     includes: "",
     image: "",
+    capacity: "",
   });
 
   useEffect(() => {
@@ -28,6 +31,7 @@ function AdminEditEvent() {
       fee: "$10",
       includes: "Certificate & refreshments",
       image: "/defaultPic.png",
+      capacity: 150,
     };
     setEventData(existingEvent);
   }, [id]);
@@ -48,7 +52,11 @@ function AdminEditEvent() {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Updated Event:", eventData);
-    alert("Event updated successfully!");
+    push({
+      title: "Event updated",
+      message: `"${eventData.name}" details have been saved.`,
+      tone: "success",
+    });
     navigate("/admin");
   };
 
@@ -120,6 +128,18 @@ function AdminEditEvent() {
               value={eventData.fee}
               onChange={handleChange}
               placeholder="e.g. Free / $10 / $25"
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Maximum Capacity</label>
+            <input
+              type="number"
+              name="capacity"
+              value={eventData.capacity}
+              onChange={handleChange}
+              min="1"
+              required
             />
           </div>
 

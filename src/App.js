@@ -6,6 +6,11 @@ import {
   Navigate,
 } from "react-router-dom";
 import Navbar from "./components/Navbar"; // Navbar
+import ToastContainer from "./components/Toast/ToastContainer";
+import ModalRoot from "./components/Modal/ModalRoot";
+import { ToastProvider } from "./context/ToastContext";
+import { ModalProvider } from "./context/ModalContext";
+import "./App.css";
 
 // Pages
 import Home from "./pages/Home";
@@ -26,39 +31,58 @@ import AdminEditEvent from "./pages/AdminEditEvent";
 
 function App() {
   return (
-    <Router>
-      <Navbar /> {/* Navbar appears on all pages */}
-      <Routes>
-        {/* Register page */}
-        <Route path="/register-account" element={<Register />} />
+    <ToastProvider>
+      <ModalProvider>
+        <Router>
+          <div className="App">
+            <Navbar /> {/* Navbar appears on all pages */}
+            <main>
+              <Routes>
+                {/* Register page */}
+                <Route path="/register-account" element={<Register />} />
 
-        {/* Default route → Login page */}
-        <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route path="/login" element={<Login />} />
+                {/* Default route → Login page */}
+                <Route path="/" element={<Navigate to="/login" replace />} />
+                <Route path="/login" element={<Login />} />
 
-        {/* Admin routes */}
-        <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/admin/events" element={<AdminEventsPage />} />
-        <Route path="/admin/users" element={<AdminUsersPage />} />
-        <Route path="/admin/events/:id" element={<AdminEventDetails />} />
+                {/* Admin routes */}
+                <Route path="/admin" element={<AdminDashboard />} />
+                <Route path="/admin/events" element={<AdminEventsPage />} />
+                <Route path="/admin/users" element={<AdminUsersPage />} />
+                <Route
+                  path="/admin/events/:id"
+                  element={<AdminEventDetails />}
+                />
 
-        {/* User routes */}
-        <Route path="/home" element={<Home />} />
-        <Route path="/events/:id" element={<EventDetails />} />
-        <Route path="/register/:id" element={<Registration />} />
-        <Route path="/user" element={<UserDashboard />} />
-        <Route path="/admin/edit-event/:id" element={<AdminEditEvent />} />
+                {/* User routes */}
+                <Route path="/home" element={<Home />} />
+                <Route path="/events/:id" element={<EventDetails />} />
+                <Route path="/register/:id" element={<Registration />} />
+                <Route path="/user" element={<UserDashboard />} />
+                <Route
+                  path="/admin/edit-event/:id"
+                  element={<AdminEditEvent />}
+                />
 
-        {/* Organizer routes */}
-        <Route path="/organizer/create-event" element={<CreateEvent />} />
-        <Route path="/organizer" element={<OrganizerDashboard />} />
-        <Route
-          path="/organizer/events/:id"
-          element={<OrganizerEventDetail />}
-        />
-        <Route path="/organizer/edit-event/:id" element={<EditEvent />} />
-      </Routes>
-    </Router>
+                {/* Organizer routes */}
+                <Route
+                  path="/organizer/create-event"
+                  element={<CreateEvent />}
+                />
+                <Route path="/organizer" element={<OrganizerDashboard />} />
+                <Route
+                  path="/organizer/events/:id"
+                  element={<OrganizerEventDetail />}
+                />
+                <Route path="/organizer/edit-event/:id" element={<EditEvent />} />
+              </Routes>
+            </main>
+            <ToastContainer />
+            <ModalRoot />
+          </div>
+        </Router>
+      </ModalProvider>
+    </ToastProvider>
   );
 }
 

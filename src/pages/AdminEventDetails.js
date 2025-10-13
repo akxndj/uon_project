@@ -1,33 +1,37 @@
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import "../styles/admin.css";
+import { getEventById } from "../data/events";
+import { getRegistrationCount } from "../utils/registrationStorage";
+import { useToast } from "../context/ToastContext";
+import { useModal } from "../context/ModalContext";
 
 function AdminEventDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { push } = useToast();
+  const { confirm } = useModal();
 
-  // Fake event data (mock)
-  const events = [
-    {
-      id: 1,
-      name: "Orientation Week",
-      date: "2025-02-15",
-      location: "Callaghan Campus",
-      participants: 120,
-      description: "Welcome new students and explore campus life.",
-    },
-    {
-      id: 2,
-      name: "Career Workshop",
-      date: "2025-03-05",
-      location: "Online (Zoom)",
-      participants: 80,
-      description: "A workshop to prepare for your future career.",
-    },
-  ];
+  const event = useMemo(() => getEventById(id), [id]);
+  const [participants, setParticipants] = useState(
+    event ? getRegistrationCount(event.id) : 0
+  );
 
-  // Find the event by id
-  const event = events.find((e) => e.id.toString() === id);
+  useEffect(() => {
+    if (!event) return;
+    const refreshParticipants = () =>
+      setParticipants(getRegistrationCount(event.id));
+
+    refreshParticipants();
+    if (typeof window === "undefined") return undefined;
+    const handleStorage = ({ key }) => {
+      if (key === "eventRegistrations") {
+        refreshParticipants();
+      }
+    };
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
+  }, [event]);
 
   // Handle edit navigation
   const handleEdit = () => {
@@ -35,14 +39,48 @@ function AdminEventDetails() {
   };
 
   // Handle delete confirmation
-  const handleDelete = () => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this event?"
-    );
-    if (confirmDelete) {
-      alert("Event deleted successfully!");
-      navigate("/admin");
-    }
+  const handleDelete = async () => {
+    const approved = await confirm({
+      title: `Delete ${event?.name || "this event"}?`,
+      description:
+        "This event will be removed from the catalogue along with all registrations.",
+      confirmLabel: "Delete event",
+      cancelLabel: "Cancel",
+      tone: "danger",
+      size: "md",
+      render: () =>
+        event ? (
+          <div className="modal-details">
+            <p>
+              Are you sure you want to delete{" "}
+              <strong>{event.name}</strong>?
+            </p>
+            <ul className="modal-details__list">
+              <li>
+                <span>Date:</span> {event.date}
+              </li>
+              <li>
+                <span>Location:</span> {event.location}
+              </li>
+              <li>
+                <span>Capacity:</span> {event.capacity}
+              </li>
+              <li>
+                <span>Registered:</span> {participants}
+              </li>
+            </ul>
+          </div>
+        ) : null,
+    });
+
+    if (!approved) return;
+
+    push({
+      title: "Event deleted",
+      message: `"${event.name}" has been removed.`,
+      tone: "info",
+    });
+    navigate("/admin");
   };
 
   // If no event found
@@ -69,7 +107,10 @@ function AdminEventDetails() {
           <strong>Location:</strong> {event.location}
         </p>
         <p>
-          <strong>Participants:</strong> {event.participants}
+          <strong>Participants:</strong> {participants}/{event.capacity}
+        </p>
+        <p>
+          <strong>Maximum Capacity:</strong> {event.capacity}
         </p>
         <p>
           <strong>Description:</strong> {event.description}
