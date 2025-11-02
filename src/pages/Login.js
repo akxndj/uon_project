@@ -4,15 +4,30 @@ import "../styles/user.css";
 
 function Login() {
   // Username and password state
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   // Handle login form submit
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
-    let role = "user"; // Default role is user
+    const response = await fetch("http://localhost:9999/api/login", 
+      {method: "POST", 
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({email, password})
+      });
+    
+    const data = await response.json();
+
+    if(!response.ok)
+    {
+      throw new Error(data.message || "Login Failed")
+      
+    }
+
+    alert("Login Successful")
+    /* let role = "user"; // Default role is user
     if (username === "admin") role = "admin";
     else if (username === "organizer") role = "organizer";
 
@@ -21,8 +36,8 @@ function Login() {
 
     // Redirect based on role
     if (role === "admin") navigate("/admin");
-    else if (role === "organizer") navigate("/organizer");
-    else navigate("/home"); // Normal user goes to Home page
+    else if (role === "organizer") navigate("/organizer"); */
+    navigate("/home"); // Normal user goes to Home page
   };
 
   return (
@@ -36,8 +51,8 @@ function Login() {
             <label>Username:</label>
             <input
               type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
