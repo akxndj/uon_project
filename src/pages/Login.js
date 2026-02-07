@@ -48,9 +48,9 @@ function Login() {
         {/* Login form */}
         <form onSubmit={handleLogin}>
           <div className="form-group">
-            <label>Username:</label>
+            <label>Email:</label>
             <input
-              type="text"
+              type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
