@@ -2,42 +2,79 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/user.css";
 
+/**
+ * Frontend MOCK switch
+ * true  = use mock login (NO backend / NO MongoDB)
+ * false = use real backend API
+ */
+const USE_MOCK = true;
+
 function Login() {
-  // Username and password state
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  // Handle login form submit
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    const response = await fetch("http://localhost:9999/api/login", 
-      {method: "POST", 
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({email, password})
-      });
-    
-    const data = await response.json();
+    /* =========================
+       MOCK LOGIN (Frontend Only)
+       ========================= */
+    if (USE_MOCK) {
+      // You can change role to: "admin" | "organizer" | "user"
+      const mockUser = {
+        id: "u1",
+        email: email || "mock@test.com",
+        name: "Mock User",
+        role: "user",
+      };
 
-    if(!response.ok)
-    {
-      throw new Error(data.message || "Login Failed")
-      
+      localStorage.setItem("token", "mock-token");
+      localStorage.setItem("user", JSON.stringify(mockUser));
+      localStorage.setItem("role", mockUser.role);
+
+      console.log("MOCK LOGIN:", mockUser);
+
+      alert("Login Successful (MOCK)");
+
+      // Redirect based on role (optional)
+      if (mockUser.role === "admin") navigate("/admin");
+      else if (mockUser.role === "organizer") navigate("/organizer");
+      else navigate("/home");
+
+      return;
     }
 
-    alert("Login Successful")
-    /* let role = "user"; // Default role is user
-    if (username === "admin") role = "admin";
-    else if (username === "organizer") role = "organizer";
+    /* =========================
+       REAL BACKEND LOGIN
+       ========================= */
+    try {
+      const response = await fetch("http://localhost:5000/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
-    // Save role in localStorage
-    localStorage.setItem("role", role);
+      const data = await response.json();
 
-    // Redirect based on role
-    if (role === "admin") navigate("/admin");
-    else if (role === "organizer") navigate("/organizer"); */
-    navigate("/home"); // Normal user goes to Home page
+      if (!response.ok) {
+        throw new Error(data.message || "Login Failed");
+      }
+
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      localStorage.setItem("role", data.user?.role || "user");
+
+      alert("Login Successful");
+
+      if (data.user?.role === "admin") navigate("/admin");
+      else if (data.user?.role === "organizer") navigate("/organizer");
+      else navigate("/home");
+
+    } catch (error) {
+      console.error("Login error:", error);
+      alert(error.message || "Login failed");
+    }
   };
 
   return (
@@ -45,7 +82,6 @@ function Login() {
       <div className="form-card">
         <h1>Login</h1>
 
-        {/* Login form */}
         <form onSubmit={handleLogin}>
           <div className="form-group">
             <label>Email:</label>
@@ -53,6 +89,7 @@ function Login() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              placeholder="test@test.com"
               required
             />
           </div>
@@ -63,15 +100,21 @@ function Login() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              placeholder="any password"
               required
             />
           </div>
 
-          {/* Submit button */}
           <button type="submit" className="form-btn">
             Login
           </button>
         </form>
+
+        {USE_MOCK && (
+          <p style={{ marginTop: "10px", fontSize: "12px", color: "#888" }}>
+            MOCK MODE ENABLED (Frontend only)
+          </p>
+        )}
       </div>
     </div>
   );

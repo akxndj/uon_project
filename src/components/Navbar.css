@@ -243,3 +243,87 @@
     height: 36px;
   }
 }
+
+/* =========================
+   Notifications (Dropdown)
+   ========================= */
+
+.notification-wrapper {
+  position: relative;
+}
+
+/* red dot on bell */
+.notification-dot {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 8px;
+  height: 8px;
+  background: #ff3b30;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px rgba(0,0,0,0.15);
+}
+
+/* dropdown container */
+.notification-dropdown {
+  position: absolute;
+  right: 0;
+  top: 44px;
+  width: 320px;
+  background: #fff;
+  color: #0f172a; /* ✅ 关键：覆盖 header 的 white */
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  border-radius: 12px;
+  overflow: hidden;
+  z-index: 1000;
+}
+
+/* each notification block */
+.notification-item {
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+  color: #0f172a;
+}
+
+.notification-item:hover {
+  background: #f5f7fa;
+}
+
+.notification-item.unread {
+  background: #eef6ff;
+}
+
+/* ✅ 主标题：更突出 */
+.notification-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #0f172a;
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+
+/* ✅ 次信息：From Admin · Tech Conference 2026 更小更淡 */
+.notification-meta {
+  font-size: 0.75rem;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+/* optional: meta parts */
+.notification-meta .source {
+  color: #475569;
+  font-weight: 500;
+}
+
+.notification-meta .event {
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.notification-empty {
+  padding: 20px;
+  text-align: center;
+  color: #64748b;
+}

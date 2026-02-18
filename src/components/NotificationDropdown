@@ -1,0 +1,41 @@
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { useNotifications } from "../context/NotificationContext";
+import "../styles/Notification.css";
+
+const NotificationDropdown = () => {
+  const navigate = useNavigate();
+  const { notifications, markAsRead } = useNotifications();
+
+  if (!notifications.length) {
+    return (
+      <div className="notification-dropdown">
+        <div className="notification-empty">
+          No notifications
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="notification-dropdown">
+      {notifications.slice(0, 5).map((item) => (
+        <div
+          key={item._id}
+          className={`notification-item ${
+            item.isRead ? "" : "unread"
+          }`}
+          onMouseEnter={() => markAsRead(item._id)}
+          onClick={() => navigate("/notifications")}
+        >
+          <strong>{item.message}</strong>
+          <div className="notification-meta">
+            From {item.sender} · {item.eventTitle}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export default NotificationDropdown;

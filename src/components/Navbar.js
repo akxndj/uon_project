@@ -34,6 +34,9 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [role, setRole] = useState(() => localStorage.getItem("role"));
 
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+
   useEffect(() => {
     const syncRole = () => setRole(localStorage.getItem("role"));
     syncRole();
@@ -43,6 +46,28 @@ const Navbar = () => {
       window.removeEventListener("storage", syncRole);
       window.removeEventListener("focus", syncRole);
     };
+  }, []);
+
+  // 🔥 模拟通知数据（之后可改成后端 fetch）
+  useEffect(() => {
+    const demoNotifications = [
+      {
+        id: 1,
+        message: "Your event has been approved",
+        sender: "Admin",
+        eventTitle: "Tech Conference 2026",
+        isRead: false,
+      },
+      {
+        id: 2,
+        message: "New user registered for your event",
+        sender: "System",
+        eventTitle: "AI Workshop",
+        isRead: false,
+      },
+    ];
+
+    setNotifications(demoNotifications);
   }, []);
 
   const links = useMemo(() => {
@@ -59,6 +84,16 @@ const Navbar = () => {
   const headerClass = `site-header ${
     role ? roleThemes[role] : roleThemes.guest
   }`;
+
+  const unreadCount = notifications.filter(n => !n.isRead).length;
+
+  const markAsRead = (id) => {
+    setNotifications(prev =>
+      prev.map(n =>
+        n.id === id ? { ...n, isRead: true } : n
+      )
+    );
+  };
 
   return (
     <header className={headerClass}>
@@ -97,14 +132,47 @@ const Navbar = () => {
               Create Event
             </button>
           )}
-          <button
-            type="button"
-            className="icon-btn"
-            aria-label="Notifications"
-            title="Notifications"
+
+          {/* 🔔 通知系统 */}
+          <div
+            className="notification-wrapper"
+            onMouseEnter={() => setShowDropdown(true)}
+            onMouseLeave={() => setShowDropdown(false)}
           >
-            🔔
-          </button>
+            <button className="icon-btn">
+              🔔
+              {unreadCount > 0 && (
+                <span className="notification-dot"></span>
+              )}
+            </button>
+
+            {showDropdown && (
+              <div className="notification-dropdown">
+                {notifications.length === 0 ? (
+                  <div className="notification-empty">
+                    No notifications
+                  </div>
+                ) : (
+                  notifications.map(item => (
+                    <div
+                      key={item.id}
+                      className={`notification-item ${
+                        item.isRead ? "" : "unread"
+                      }`}
+                      onMouseEnter={() => markAsRead(item.id)}
+                      onClick={() => navigate("/notifications")}
+                    >
+                      <strong>{item.message}</strong>
+                      <div className="notification-meta">
+                        From {item.sender} · {item.eventTitle}
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
+          </div>
+
           {role ? (
             <button
               type="button"
