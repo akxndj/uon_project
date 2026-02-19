@@ -18,10 +18,11 @@ app.use(express.json());
 mongoose.connect(process.env.MONGO_URI) .then(() => console.log("database connected successfully"))
                                         .catch(err => console.error("could not connect to db", err));
 
+
 app.use("/api/events", eventRouter);
 app.use("/api/users", userRouter);
 app.use("/api/login", authRouter);
 
 
 const port = process.env.port;
-app.listen(port, () => console.log("server running"));
+app.listen(port, () => console.log(`server running on ${port}`));

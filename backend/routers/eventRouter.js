@@ -44,7 +44,9 @@ router.post("/", async(req, res) => {
       fee: req.body.fee,
       included: req.body.included,
       image: req.body.image,
-      createdBy: req.body.createdBy                                 
+      createdBy: req.body.createdBy,
+      capacity: req.body.capacity,
+      registered: req.body.registered                         
     });
     const savedEvent = await newEvent.save();
     res.status(201).json({message: "Event created successfully! ", event: savedEvent});
