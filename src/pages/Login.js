@@ -21,12 +21,11 @@ function Login() {
        MOCK LOGIN (Frontend Only)
        ========================= */
     if (USE_MOCK) {
-      // You can change role to: "admin" | "organizer" | "user"
       const mockUser = {
         id: "u1",
         email: email || "mock@test.com",
         name: "Mock User",
-        role: "user",
+        role: "organizer",
       };
 
       localStorage.setItem("token", "mock-token");

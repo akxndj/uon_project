@@ -1,5 +1,14 @@
+const rolePrimaryMap = {
+  user: "#002664",      
+  organizer: "#F57C00", 
+  admin: "#2E7D32",     
+};
+
+const currentRole = localStorage.getItem("role") || "user";
+const primaryColor = rolePrimaryMap[currentRole] || "#002664";
+
 const colors = {
-  primary: "#002664", // UoN navy
+  primary: primaryColor, // UoN navy
   secondary: "#FFB81C", // UoN gold
   neutral100: "#F8FAFC",
   neutral200: "#E4E8EE",
