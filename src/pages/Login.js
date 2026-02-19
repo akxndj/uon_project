@@ -17,9 +17,8 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    /* =========================
-       MOCK LOGIN (Frontend Only)
-       ========================= */
+    //MOCK LOGIN (Frontend Only)
+
     if (USE_MOCK) {
       const mockUser = {
         id: "u1",
@@ -33,8 +32,6 @@ function Login() {
       localStorage.setItem("role", mockUser.role);
 
       console.log("MOCK LOGIN:", mockUser);
-
-      alert("Login Successful (MOCK)");
 
       // Redirect based on role (optional)
       if (mockUser.role === "admin") navigate("/admin");
