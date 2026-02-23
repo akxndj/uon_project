@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "../styles/user.css";
 import { useToast } from "../context/ToastContext";
+import ReturnButton from "../components/ReturnButton";
 
 function Register() {
   // Form state
@@ -60,6 +61,7 @@ function Register() {
   return (
     <div className="form-container">
       <div className="form-card">
+        <ReturnButton fallback="/login" />
         <h1>Register Account</h1>
 
         {/* Register form */}

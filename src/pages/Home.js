@@ -3,6 +3,7 @@ import "../styles/user.css";
 // import eventsCatalogue from "../data/events";
 import { getRegistrationCount } from "../utils/registrationStorage";
 import EventCard from "../components/EventCard";
+import ReturnButton from "../components/ReturnButton";
 
 const getCampuses = (events) => {
   const unique = new Set(events.map((event) => event.location));
@@ -50,6 +51,7 @@ function Home() {
   }, []);
   return (
     <div className="home-shell page-shell">
+      <ReturnButton />
       <section className="home-hero">
         <h1>Discover events across UoN</h1>
         <p>

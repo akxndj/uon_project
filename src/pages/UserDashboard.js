@@ -10,6 +10,7 @@ import {
 } from "../utils/registrationStorage";
 import { useToast } from "../context/ToastContext";
 import { useModal } from "../context/ModalContext";
+import ReturnButton from "../components/ReturnButton";
 
 const capacityTone = (registrations, capacity) => {
   if (!capacity) return "danger";
@@ -71,6 +72,18 @@ function UserDashboard() {
     const eventDate = new Date(event.endTime || event.date);
     return eventDate < new Date();
   });
+
+  const sortedUpcoming = useMemo(
+    () =>
+      [...upcoming].sort(
+        (a, b) =>
+          new Date(a.startTime || `${a.date}T09:00`) -
+          new Date(b.startTime || `${b.date}T09:00`)
+      ),
+    [upcoming]
+  );
+
+  const nextEvent = sortedUpcoming[0];
 
   const cancelRegistration = async (event) => {
     if (!userId) return;
@@ -183,6 +196,7 @@ function UserDashboard() {
 
   return (
     <div className="user-dashboard page-shell">
+      <ReturnButton fallback="/user" />
       <header className="user-dashboard__header">
         <div>
           <h1>My Events</h1>
@@ -192,6 +206,64 @@ function UserDashboard() {
           Browse Events
         </Link>
       </header>
+
+      <section className="user-metrics">
+        <article>
+          <span>Upcoming</span>
+          <strong>{upcoming.length}</strong>
+        </article>
+        <article>
+          <span>Past</span>
+          <strong>{past.length}</strong>
+        </article>
+        <article>
+          <span>Total</span>
+          <strong>{registrations.length}</strong>
+        </article>
+      </section>
+
+      <section className="user-highlight">
+        <div>
+          <h2>Next Up</h2>
+          {nextEvent ? (
+            <>
+              <p className="user-highlight__title">{nextEvent.name}</p>
+              <p className="user-highlight__meta">
+                📅 {nextEvent.date} &nbsp; • &nbsp; 📍 {nextEvent.location}
+              </p>
+              <div className="user-highlight__actions">
+                <Link
+                  to={`/events/${nextEvent.id}`}
+                  className="btn btn--secondary"
+                >
+                  View Details
+                </Link>
+                <button
+                  type="button"
+                  className="btn btn--info"
+                  onClick={() => addToCalendar(nextEvent)}
+                >
+                  Add to Calendar
+                </button>
+                <button
+                  type="button"
+                  className="btn btn--ghost"
+                  onClick={() => handleShare(nextEvent)}
+                >
+                  Share
+                </button>
+              </div>
+            </>
+          ) : (
+            <div className="user-empty">
+              <p>You don't have any upcoming registrations yet.</p>
+              <Link to="/home" className="btn btn--primary">
+                Discover Events
+              </Link>
+            </div>
+          )}
+        </div>
+      </section>
 
       <section className="user-section">
         <h2>Upcoming</h2>

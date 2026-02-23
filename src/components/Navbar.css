@@ -16,27 +16,13 @@
   );
 }
 
-.site-header--user {
-  background: linear-gradient(
-    135deg,
-    rgba(0, 38, 100, 0.94),
-    rgba(0, 70, 140, 0.88)
-  );
-}
-
-.site-header--organizer {
+.site-header--user,
+.site-header--organizer,
+.site-header--admin {
   background: linear-gradient(
     135deg,
     rgba(245, 124, 0, 0.94),
     rgba(255, 184, 28, 0.88)
-  );
-}
-
-.site-header--admin {
-  background: linear-gradient(
-    135deg,
-    rgba(46, 125, 50, 0.94),
-    rgba(22, 163, 74, 0.88)
   );
 }
 

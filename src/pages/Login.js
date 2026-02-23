@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/user.css";
+import ReturnButton from "../components/ReturnButton";
 
 /**
  * Frontend MOCK switch
@@ -79,6 +80,7 @@ function Login() {
   return (
     <div className="form-container">
       <div className="form-card">
+        <ReturnButton fallback="/home" />
         <h1>Login</h1>
 
         <form onSubmit={handleLogin}>

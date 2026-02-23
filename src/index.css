@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap");
 
 :root {
-  --color-primary: #002664;
+  --color-primary: #f57c00;
   --color-secondary: #ffb81c;
   --color-neutral-100: #f8fafc;
   --color-neutral-200: #e4e8ee;
@@ -98,6 +98,12 @@ button {
   width: min(100%, var(--container-width));
   margin: 0 auto;
   padding: 0 var(--gutter);
+}
+
+.return-bar {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: var(--spacing-lg);
 }
 
 .sr-only {
