@@ -134,209 +134,64 @@ function EventDetails() {
   const showMobileCTA = !alreadyRegistered && !isFull;
 
   return (
-    <div className="event-detail-page page-shell">
-      <section className="event-hero">
-        <div className="event-hero__media" aria-hidden="true">
-          <img src={event.image || defaultPic} alt="" />
-          <div className="event-hero__overlay" />
+  <div className="admin-dashboard">
+    <div className="admin-section">
+
+      {/* Header */}
+      <div className="admin-header">
+        <div>
+          <h1 className="admin-title">{event.name}</h1>
+          <p className="admin-subtitle">
+            View event details and manage participation.
+          </p>
         </div>
-        <div className="event-hero__content">
-          <h1>{event.name}</h1>
-          <div className="event-hero__meta">
-            <span className="event-hero__meta-item">
-              <span aria-hidden="true">📅</span>
-              <span>{event.date}</span>
-            </span>
-            <span className="event-hero__meta-item">
-              <span aria-hidden="true">📍</span>
-              <span>{event.location}</span>
-            </span>
-            <span className="event-hero__meta-item">
-              <span aria-hidden="true">🎟️</span>
-              <span>
-                {registrationCount}/{event.capacity} attending
-              </span>
-            </span>
-          </div>
-        </div>
-      </section>
-
-      <div className="event-detail-layout">
-        <section className="event-detail-body">
-          <div className="event-detail-tabs" role="tablist">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                type="button"
-                role="tab"
-                aria-selected={activeTab === tab.id}
-                className={
-                  activeTab === tab.id
-                    ? "event-tab event-tab--active"
-                    : "event-tab"
-                }
-                onClick={() => setActiveTab(tab.id)}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-
-          {activeTab === "overview" && (
-            <div className="event-detail-section" role="tabpanel">
-              <h3>About this event</h3>
-              <p>{event.description}</p>
-
-              <div className="event-detail-grid">
-                <div>
-                  <h4>Eligibility</h4>
-                  <p>{event.eligibility || "Open to all"}</p>
-                </div>
-                <div>
-                  <h4>Fee</h4>
-                  <p>{event.fee || "Free"}</p>
-                </div>
-                <div>
-                  <h4>Includes</h4>
-                  <p>{event.includes || "Event resources"}</p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {activeTab === "agenda" && event.agenda?.length ? (
-            <div className="event-detail-section" role="tabpanel">
-              <h3>Agenda</h3>
-              <ul className="event-agenda">
-                {event.agenda.map((item) => (
-                  <li key={`${item.time}-${item.title}`}>
-                    <span>{item.time}</span>
-                    <span>{item.title}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : null}
-
-          {activeTab === "faq" && event.faq?.length ? (
-            <div className="event-detail-section" role="tabpanel">
-              <h3>Frequently Asked Questions</h3>
-              <div className="event-faq">
-                {event.faq.map((item) => (
-                  <details key={item.question}>
-                    <summary>{item.question}</summary>
-                    <p>{item.answer}</p>
-                  </details>
-                ))}
-              </div>
-            </div>
-          ) : null}
-
-          {activeTab === "contact" && (
-            <div className="event-detail-section" role="tabpanel">
-              <h3>Contact</h3>
-              <p>
-                <strong>{event.contact?.name || "Event Team"}</strong>
-                <br />
-                <a href={`mailto:${event.contact?.email || "events@uon.edu.au"}`}>
-                  {event.contact?.email || "events@uon.edu.au"}
-                </a>
-              </p>
-              <p>
-                Need to cancel? Head to your dashboard and remove your
-                registration so another student can join.
-              </p>
-            </div>
-          )}
-        </section>
-
-        <aside className="event-detail-summary">
-          <div className="event-summary-header">
-            <h2>Event Overview</h2>
-            {alreadyRegistered ? (
-              <div className="status-banner info">
-                You are registered for this event.
-              </div>
-            ) : isFull ? (
-              <div className="status-banner danger">
-                This event is at capacity.
-              </div>
-            ) : (
-              <div className="status-banner">
-                Spots available — secure your place now.
-              </div>
-            )}
-          </div>
-
-          <div className="event-summary-row">
-            <span>Date</span>
-            <span>{event.date}</span>
-          </div>
-          <div className="event-summary-row">
-            <span>Location</span>
-            <span>{event.location}</span>
-          </div>
-          <div className="event-summary-row">
-            <span>Capacity</span>
-            <span>
-              {registrationCount}/{event.capacity}
-            </span>
-          </div>
-          <div className="event-summary-progress">
-            <span>{availableSpots} spots remaining</span>
-            <div className="capacity-meter">
-              <div
-                className={`capacity-meter__fill capacity-meter__fill--${tone}`}
-                style={{
-                  width: `${Math.min(
-                    event.capacity
-                      ? (registrationCount / event.capacity) * 100
-                      : 0,
-                    100
-                  ).toFixed(2)}%`,
-                }}
-              />
-            </div>
-          </div>
-
-          <div className="event-summary-actions">
-            {!alreadyRegistered && !isFull && (
-              <Link to={`/register/${event.id}`} className="btn btn--primary">
-                Register Now
-              </Link>
-            )}
-            <button
-              type="button"
-              className="btn btn--info"
-              onClick={handleShare}
-            >
-              Share Event
-            </button>
-            <button
-              type="button"
-              className="btn btn--secondary"
-              onClick={handleAddToCalendar}
-            >
-              Add to Calendar
-            </button>
-            <Link to="/home" className="btn btn--secondary">
-              Back to Home
-            </Link>
-          </div>
-        </aside>
       </div>
 
-      {showMobileCTA && (
-        <div className="event-mobile-cta">
-          <Link to={`/register/${event.id}`} className="btn btn--primary">
-            Register Now
-          </Link>
-          <button type="button" className="btn btn--ghost" onClick={handleShare}>
-            Share
-          </button>
+      {/* 主体内容 */}
+      <div className="admin-list-scroll">
+        <div className="admin-card">
+          
+          <div className="admin-card__identity">
+            <p><strong>Date:</strong> {event.date}</p>
+            <p><strong>Location:</strong> {event.location}</p>
+            <p>
+              <strong>Participants:</strong>{" "}
+              {registrationCount}/{event.capacity}
+            </p>
+            <p><strong>Maximum Capacity:</strong> {event.capacity}</p>
+            <p><strong>Description:</strong> {event.description}</p>
+          </div>
+
+          {/* 操作按钮 */}
+          <div className="admin-buttons" style={{ marginTop: "20px" }}>
+            <Link
+              to={`/organizer/edit-event/${event.id}`}
+              className="admin-btn"
+            >
+              Edit
+            </Link>
+
+            <button
+              type="button"
+              className="admin-btn danger"
+              onClick={() => window.history.back()}
+            >
+              Back
+            </button>
+          </div>
+
         </div>
-      )}
+      </div>
+
+      {/* Footer */}
+      <div className="admin-footer">
+        <Link to="/organizer" className="view-all-btn">
+          Back to Dashboard
+        </Link>
+      </div>
+
     </div>
+  </div>
   );
 }
 

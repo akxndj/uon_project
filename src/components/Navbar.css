@@ -6,19 +6,8 @@
   box-shadow: var(--shadow-sm);
   transition: background-color 200ms ease, box-shadow 200ms ease;
   color: #fff;
-}
 
-.site-header--guest {
-  background: linear-gradient(
-    135deg,
-    rgba(0, 38, 100, 0.92),
-    rgba(2, 132, 199, 0.82)
-  );
-}
-
-.site-header--user,
-.site-header--organizer,
-.site-header--admin {
+  /* 🔥 固定橙色背景 */
   background: linear-gradient(
     135deg,
     rgba(245, 124, 0, 0.94),
@@ -64,8 +53,8 @@
 
 .brand-name {
   font-family: var(--font-heading);
-  font-weight: 600;
-  font-size: 1.125rem;
+  font-weight: 700;
+  font-size: 1.3rem;
 }
 
 .site-header__nav {

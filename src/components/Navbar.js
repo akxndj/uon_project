@@ -1,9 +1,10 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import React, { useMemo } from "react";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import schoolLogo from "../assets/schoolLogo.png";
 import "./Navbar.css";
 
-const roleCapabilities = {
+const roleHierarchy = {
+  guest: [],
   user: ["user"],
   organizer: ["user", "organizer"],
   admin: ["user", "organizer", "admin"],
@@ -28,46 +29,24 @@ const navConfig = {
   ],
 };
 
-const roleThemes = {
-  guest: "site-header--guest",
-  user: "site-header--user",
-  organizer: "site-header--organizer",
-  admin: "site-header--admin",
-};
-
 const Navbar = () => {
   const navigate = useNavigate();
-  const [role, setRole] = useState(() => localStorage.getItem("role"));
+  const location = useLocation();
 
-  const roles = useMemo(() => {
-    return roleCapabilities[role] || [];
-  }, [role]);
-
-  /* admin > organizer > user */
-  const activeRole = useMemo(() => {
-    if (roles.includes("admin")) return "admin";
-    if (roles.includes("organizer")) return "organizer";
-    if (roles.includes("user")) return "user";
-    return "guest";
-  }, [roles]);
-
-  useEffect(() => {
-    const syncRole = () => setRole(localStorage.getItem("role"));
-    syncRole();
-    window.addEventListener("storage", syncRole);
-    window.addEventListener("focus", syncRole);
-    return () => {
-      window.removeEventListener("storage", syncRole);
-      window.removeEventListener("focus", syncRole);
-    };
-  }, []);
+  const role = localStorage.getItem("role");
+  const isLoggedIn = !!role;
+  const currentRole = role || "guest";
 
   const links = useMemo(() => {
-    if (!role) return navConfig.guest;
+    if (!isLoggedIn) {
+      return navConfig.guest;
+    }
+
+    const capabilities = roleHierarchy[currentRole] || [];
 
     let combined = [];
 
-    roles.forEach((r) => {
+    capabilities.forEach((r) => {
       if (navConfig[r]) {
         combined = [...combined, ...navConfig[r]];
       }
@@ -76,25 +55,20 @@ const Navbar = () => {
     return Array.from(
       new Map(combined.map((item) => [item.to, item])).values()
     );
-  }, [roles, role]);
+  }, [currentRole, isLoggedIn]);
 
   const handleLogout = () => {
     localStorage.removeItem("role");
-    setRole(null);
     navigate("/login");
+    window.location.reload();
   };
 
-  const headerClass = `site-header ${roleThemes[activeRole]}`;
-
   return (
-    <header className={headerClass}>
+    <header className="site-header">
       <div className="page-shell site-header__inner">
         <div className="site-header__brand">
-          <img src={schoolLogo} alt="University of Newcastle" />
-          <div className="site-header__branding-copy">
-            <span className="brand-kicker">University of Newcastle</span>
-            <span className="brand-name">Event Platform</span>
-          </div>
+          <img src={schoolLogo} alt="logo" />
+          <span className="brand-name">Event Platform</span>
         </div>
 
         <nav className="site-header__nav">
@@ -114,22 +88,8 @@ const Navbar = () => {
         </nav>
 
         <div className="site-header__actions">
-          {roles.includes("organizer") && (
-            <button
-              type="button"
-              className="btn btn--primary"
-              onClick={() => navigate("/organizer/create-event")}
-            >
-              Create Event
-            </button>
-          )}
-
-          {role && (
-            <button
-              type="button"
-              className="btn btn--ghost"
-              onClick={handleLogout}
-            >
+          {isLoggedIn && (
+            <button className="btn btn--ghost" onClick={handleLogout}>
               Logout
             </button>
           )}

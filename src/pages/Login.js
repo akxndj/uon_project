@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/user.css";
-import ReturnButton from "../components/ReturnButton";
 
 /**
  * Frontend MOCK switch
@@ -25,7 +24,7 @@ function Login() {
         id: "u1",
         email: email || "mock@test.com",
         name: "Mock User",
-        role: "organizer",
+        role: "admin",
       };
 
       localStorage.setItem("token", "mock-token");
@@ -35,10 +34,9 @@ function Login() {
       console.log("MOCK LOGIN:", mockUser);
 
       // Redirect based on role (optional)
-      if (mockUser.role === "admin") navigate("/admin");
-      else if (mockUser.role === "organizer") navigate("/organizer");
-      else navigate("/home");
-
+      if (mockUser.role === "admin") navigate("/admin", { replace: true });
+      else if (mockUser.role === "organizer") navigate("/organizer", { replace: true });
+      else navigate("/home", { replace: true });
       return;
     }
 
@@ -77,7 +75,6 @@ function Login() {
   return (
     <div className="form-container">
       <div className="form-card">
-        <ReturnButton fallback="/home" />
         <h1>Login</h1>
 
         <form onSubmit={handleLogin}>

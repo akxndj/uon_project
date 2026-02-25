@@ -118,44 +118,47 @@ function AdminEventsPage() {
   );
 
   return (
-    <div className="admin-dashboard">
-      <div className="admin-section">
-        <div className="admin-header">
-          <div>
-            <h1 className="admin-title">Manage Events</h1>
-            <p className="admin-subtitle">
-              Review upcoming sessions, manage capacity, and keep listings
-              healthy.
-            </p>
-          </div>
-          <div className="admin-search">
-            <label htmlFor="admin-event-search">Search</label>
-            <input
-              id="admin-event-search"
-              type="search"
-              placeholder="Search by name or location"
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-            />
-          </div>
+  <div className="admin-dashboard">
+    <div className="admin-section">
+
+      {/* 固定 Header */}
+      <div className="admin-header">
+        <div>
+          <h1 className="admin-title">Manage Events</h1>
+          <p className="admin-subtitle">
+            Review upcoming sessions, manage capacity, and keep listings healthy.
+          </p>
         </div>
+        <div className="admin-search">
+          <label htmlFor="admin-event-search">Search</label>
+          <input
+            id="admin-event-search"
+            type="search"
+            placeholder="Search by name or location"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+          />
+        </div>
+      </div>
 
-        <section className="admin-metrics">
-          <article>
-            <span>Total Events</span>
-            <strong>{eventList.length}</strong>
-          </article>
-          <article>
-            <span>Total Registrations</span>
-            <strong>{totalRegistrations}</strong>
-          </article>
-          <article>
-            <span>Near Capacity</span>
-            <strong>{nearCapacity}</strong>
-          </article>
-        </section>
+      {/* 固定 Metrics */}
+      <section className="admin-metrics">
+        <article>
+          <span>Total Events</span>
+          <strong>{eventList.length}</strong>
+        </article>
+        <article>
+          <span>Total Registrations</span>
+          <strong>{totalRegistrations}</strong>
+        </article>
+        <article>
+          <span>Near Capacity</span>
+          <strong>{nearCapacity}</strong>
+        </article>
+      </section>
 
-        {/* Event List */}
+      {/* 可滚动列表区域 */}
+      <div className="admin-list-scroll">
         <div className="admin-list">
           {filteredEvents.map((event) => (
             <div className="admin-card" key={event.id}>
@@ -172,7 +175,6 @@ function AdminEventsPage() {
               </div>
 
               <div className="admin-buttons">
-                {/* View details */}
                 <Link
                   to={`/admin/events/${event.id}`}
                   className="admin-btn primary"
@@ -180,7 +182,6 @@ function AdminEventsPage() {
                   View
                 </Link>
 
-                {/* Edit event */}
                 <Link
                   to={`/admin/edit-event/${event.id}`}
                   className="admin-btn"
@@ -188,7 +189,6 @@ function AdminEventsPage() {
                   Edit
                 </Link>
 
-                {/* Delete event */}
                 <button
                   className="admin-btn danger"
                   onClick={() => handleDelete(event.id)}
@@ -205,15 +205,17 @@ function AdminEventsPage() {
             </div>
           )}
         </div>
-
-        {/* Back to dashboard */}
-        <div style={{ textAlign: "center", marginTop: "20px" }}>
-          <Link to="/admin" className="view-all-btn">
-            Back to Dashboard
-          </Link>
-        </div>
       </div>
+
+      {/* 固定 Footer */}
+      <div className="admin-footer">
+        <Link to="/admin" className="view-all-btn">
+          Back to Dashboard
+        </Link>
+      </div>
+
     </div>
+  </div>
   );
 }
 
