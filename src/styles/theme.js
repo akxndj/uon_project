@@ -1,7 +1,7 @@
 const rolePrimaryMap = {
-  user: "#002664",      
-  organizer: "#F57C00", 
-  admin: "#2E7D32",     
+  user: "#F57C00",
+  organizer: "#F57C00",
+  admin: "#F57C00",
 };
 
 const currentRole = localStorage.getItem("role") || "user";

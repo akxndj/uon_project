@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo, useState } from "react";
 import "../styles/user.css";
-import eventsCatalogue from "../data/events";
+// import eventsCatalogue from "../data/events";
 import { getRegistrationCount } from "../utils/registrationStorage";
 import EventCard from "../components/EventCard";
+import ReturnButton from "../components/ReturnButton";
 
 const getCampuses = (events) => {
   const unique = new Set(events.map((event) => event.location));
@@ -12,12 +13,7 @@ const getCampuses = (events) => {
 function Home() {
   const [search, setSearch] = useState("");
   const [locationFilter, setLocationFilter] = useState("all");
-  const [events, setEvents] = useState(() =>
-    eventsCatalogue.map((event) => ({
-      ...event,
-      registrations: getRegistrationCount(event.id),
-    }))
-  );
+  const [events, setEvents] = useState([]);
 
   const campuses = useMemo(() => getCampuses(events), [events]);
 
@@ -35,27 +31,27 @@ function Home() {
   }, [events, search, locationFilter]);
 
   useEffect(() => {
-    if (typeof window === "undefined") return undefined;
-    const refresh = () => {
-      setEvents(
-        eventsCatalogue.map((event) => ({
-          ...event,
-          registrations: getRegistrationCount(event.id),
-        }))
-      );
-    };
-    refresh();
-    const handleStorage = ({ key }) => {
-      if (key === "eventRegistrations") {
-        refresh();
-      }
-    };
-    window.addEventListener("storage", handleStorage);
-    return () => window.removeEventListener("storage", handleStorage);
-  }, []);
+  const fetchEvents = async () => {
+    try {
+      const response = await fetch("http://localhost:9999/api/events"); 
+      const data = await response.json();
 
+      const eventsWithRegistrations = data.map((event) => ({
+        ...event,
+        registrations: getRegistrationCount(event.eventId),
+      }));
+
+      setEvents(eventsWithRegistrations);
+    } catch (error) {
+      console.error("Error fetching events:", error);
+    }
+  };
+
+    fetchEvents();
+  }, []);
   return (
     <div className="home-shell page-shell">
+      <ReturnButton />
       <section className="home-hero">
         <h1>Discover events across UoN</h1>
         <p>

@@ -23,11 +23,13 @@ const determineTone = (registered, capacity) => {
 
 const EventCard = ({ event }) => {
   const {
-    id,
+    eventId,
     name,
     date,
     location,
     description,
+    fee,
+    included,
     image,
     capacity,
     registrations = 0,
@@ -57,8 +59,16 @@ const EventCard = ({ event }) => {
             </span>
             <span>{location}</span>
           </div>
+          <div>
+            <span>Included: {included}</span>
+          </div>
+          <div>
+            <span>
+            <span>Fee: {fee}</span>
+            </span>
+          </div>
         </div>
-        <p className="event-card__description">{description}</p>
+        <p className="event-card__description">Description: {description}</p>
 
         <div className="event-card__capacity">
           <span>
@@ -79,10 +89,10 @@ const EventCard = ({ event }) => {
       </div>
 
       <footer className="event-card__footer">
-        <Link to={`/events/${id}`} className="btn btn--primary">
+        <Link to={`/events/${eventId}`} className="btn btn--primary">
           View Details
         </Link>
-        <Link to={`/register/${id}`} className="btn btn--secondary">
+        <Link to={`/register/${eventId}`} className="btn btn--secondary">
           Register
         </Link>
       </footer>

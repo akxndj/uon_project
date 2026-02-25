@@ -5,6 +5,7 @@ import eventsCatalogue from "../data/events";
 import { getRegistrationCount } from "../utils/registrationStorage";
 import { useToast } from "../context/ToastContext";
 import { useModal } from "../context/ModalContext";
+import ReturnButton from "../components/ReturnButton";
 
 const parseDate = (value) => {
   if (!value) return null;
@@ -147,6 +148,7 @@ function OrganizerDashboard() {
   return (
     <div className="organizer-page">
       <div className="organizer-dashboard">
+        <ReturnButton fallback="/organizer" />
         <section className="organizer-hero">
           <div>
             <h1>Organizer Dashboard</h1>
