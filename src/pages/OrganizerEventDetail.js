@@ -97,53 +97,61 @@ function OrganizerEventDetails() {
   };
 
   return (
-    <div className="organizer-page">
-      <div className="organizer-dashboard">
-        <div className="organizer-section">
-          {/* Event title */}
-          <h1 className="organizer-title">{event.name}</h1>
+  <div className="admin-dashboard">
+    <div className="page-shell">
+      <div className="admin-section">
 
-          {/* Event details */}
-          <p>
-            <strong>Date:</strong> {event.date}
-          </p>
-          <p>
-            <strong>Location:</strong> {event.location}
-          </p>
-          <p>
-            <strong>Participants:</strong> {participants}/{event.capacity}
-          </p>
-          <p>
-            <strong>Maximum Capacity:</strong> {event.capacity}
-          </p>
-          <p>
-            <strong>Description:</strong> {event.description}
-          </p>
-
-          {/* Buttons */}
-          <div className="organizer-buttons" style={{ marginTop: "25px" }}>
-            <button className="organizer-action-btn edit" onClick={handleEdit}>
-              Edit
-            </button>
-
-            <button
-              className="organizer-action-btn danger"
-              onClick={handleDelete}
-            >
-              Delete
-            </button>
-          </div>
-
-          {/* Back button */}
-          <div style={{ textAlign: "center", marginTop: "25px" }}>
-            <Link to="/organizer" className="organizer-action-btn">
-              ← Back to Dashboard
-            </Link>
+        {/* Header */}
+        <div className="admin-header">
+          <div>
+            <h1 className="admin-title">{event.name}</h1>
+            <p className="admin-subtitle">
+              Track performance and manage this event.
+            </p>
           </div>
         </div>
+
+        {/* Scrollable content */}
+        <div className="admin-list-scroll">
+          <div className="admin-card">
+
+            <div className="admin-card__identity">
+              <p><strong>Date:</strong> {event.date}</p>
+              <p><strong>Location:</strong> {event.location}</p>
+              <p>
+                <strong>Participants:</strong> {participants}/{event.capacity}
+              </p>
+              <p><strong>Maximum Capacity:</strong> {event.capacity}</p>
+              <p><strong>Description:</strong> {event.description}</p>
+            </div>
+
+            <div className="admin-buttons" style={{ marginTop: "25px" }}>
+              <button className="admin-btn" onClick={handleEdit}>
+                Edit
+              </button>
+
+              <button
+                className="admin-btn danger"
+                onClick={handleDelete}
+              >
+                Delete
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="admin-footer">
+          <Link to="/organizer" className="view-all-btn">
+            ← Back to Dashboard
+          </Link>
+        </div>
+
       </div>
     </div>
-  );
+  </div>
+);
 }
 
 export default OrganizerEventDetails;

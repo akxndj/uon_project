@@ -1,20 +1,29 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 function ReturnButton({ label = "Return", fallback = "/home" }) {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleClick = () => {
-    if (typeof window !== "undefined" && window.history.length > 1) {
-      navigate(-1);
+    if (location.pathname === "/login") {
+      navigate(fallback, { replace: true });
       return;
     }
-    navigate(fallback);
+    if (window.history.length > 2) {
+      navigate(-1);
+    } else {
+      navigate(fallback, { replace: true });
+    }
   };
 
   return (
     <div className="return-bar">
-      <button type="button" className="btn btn--secondary" onClick={handleClick}>
+      <button
+        type="button"
+        className="btn btn--secondary"
+        onClick={handleClick}
+      >
         {label}
       </button>
     </div>

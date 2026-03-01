@@ -10,7 +10,6 @@ import {
 } from "../utils/registrationStorage";
 import { useToast } from "../context/ToastContext";
 import { useModal } from "../context/ModalContext";
-import ReturnButton from "../components/ReturnButton";
 
 const capacityTone = (registrations, capacity) => {
   if (!capacity) return "danger";
@@ -196,7 +195,6 @@ function UserDashboard() {
 
   return (
     <div className="user-dashboard page-shell">
-      <ReturnButton fallback="/user" />
       <header className="user-dashboard__header">
         <div>
           <h1>My Events</h1>

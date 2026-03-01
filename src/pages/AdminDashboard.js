@@ -1,13 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "../styles/admin.css";
-import ReturnButton from "../components/ReturnButton";
 
 function AdminDashboard() {
   return (
     <div className="admin-page">
       <div className="admin-dashboard">
-        <ReturnButton fallback="/admin" />
         <h1 className="admin-title">Admin Dashboard</h1>
 
         {/* Two big blocks for navigation */}

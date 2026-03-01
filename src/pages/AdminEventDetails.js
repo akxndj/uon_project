@@ -96,45 +96,58 @@ function AdminEventDetails() {
   }
 
   return (
-    <div className="admin-dashboard">
+  <div className="admin-dashboard">
+    <div className="page-shell">
       <div className="admin-section">
-        {/* Event details */}
-        <h1 className="admin-title">{event.name}</h1>
-        <p>
-          <strong>Date:</strong> {event.date}
-        </p>
-        <p>
-          <strong>Location:</strong> {event.location}
-        </p>
-        <p>
-          <strong>Participants:</strong> {participants}/{event.capacity}
-        </p>
-        <p>
-          <strong>Maximum Capacity:</strong> {event.capacity}
-        </p>
-        <p>
-          <strong>Description:</strong> {event.description}
-        </p>
 
-        {/* Action buttons */}
-        <div className="admin-buttons" style={{ marginTop: "20px" }}>
-          <button className="admin-btn" onClick={handleEdit}>
-            Edit
-          </button>
-          <button className="admin-btn danger" onClick={handleDelete}>
-            Delete
-          </button>
+        {/* Header */}
+        <div className="admin-header">
+          <div>
+            <h1 className="admin-title">{event.name}</h1>
+            <p className="admin-subtitle">
+              Review event details and manage participation.
+            </p>
+          </div>
         </div>
 
-        {/* Back button */}
-        <div style={{ textAlign: "center", marginTop: "20px" }}>
+        {/* Scrollable Content */}
+        <div className="admin-list-scroll">
+          <div className="admin-card">
+
+            <div className="admin-card__identity">
+              <p><strong>Date:</strong> {event.date}</p>
+              <p><strong>Location:</strong> {event.location}</p>
+              <p>
+                <strong>Participants:</strong> {participants}/{event.capacity}
+              </p>
+              <p><strong>Maximum Capacity:</strong> {event.capacity}</p>
+              <p><strong>Description:</strong> {event.description}</p>
+            </div>
+
+            <div className="admin-buttons" style={{ marginTop: "20px" }}>
+              <button className="admin-btn" onClick={handleEdit}>
+                Edit
+              </button>
+
+              <button className="admin-btn danger" onClick={handleDelete}>
+                Delete
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="admin-footer">
           <Link to="/admin" className="view-all-btn">
             Back to Dashboard
           </Link>
         </div>
+
       </div>
     </div>
-  );
+  </div>
+);
 }
 
 export default AdminEventDetails;
