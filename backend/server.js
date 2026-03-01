@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import eventRouter from "./routers/eventRouter.js";
 import userRouter from "./routers/userRouter.js";
 import authRouter from "./routers/authRouter.js";
+import registrationRouter from "./routers/registrationRouter.js";
 
 
 
@@ -22,6 +23,7 @@ mongoose.connect(process.env.MONGO_URI) .then(() => console.log("database connec
 app.use("/api/events", eventRouter);
 app.use("/api/users", userRouter);
 app.use("/api/login", authRouter);
+app.use("/api/registrations", registrationRouter);
 
 
 const port = process.env.port;

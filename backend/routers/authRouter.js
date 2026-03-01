@@ -18,8 +18,8 @@ router.post("/", async(req, res) => {
         return res.status(404).json({message: "Password Invalid"})
     }
 
-    res.status(201).json({message: "Login Successful "});
-    console.log(`User logged in: ${user.email}`);
+    res.status(201).json({message: "Login Successful ", user: user.studentId});
+    console.log(`User logged in: ${user.email}, ${user.studentId}`);
 
   }
   catch(err)
