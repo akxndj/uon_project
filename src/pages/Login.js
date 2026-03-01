@@ -8,7 +8,7 @@ import ReturnButton from "../components/ReturnButton";
  * true  = use mock login (NO backend / NO MongoDB)
  * false = use real backend API
  */
-const USE_MOCK = true;
+const USE_MOCK = false;
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -46,7 +46,7 @@ function Login() {
        REAL BACKEND LOGIN
        ========================= */
     try {
-      const response = await fetch("http://localhost:5000/api/login", {
+      const response = await fetch("http://localhost:9999/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -59,11 +59,9 @@ function Login() {
       }
 
       localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
+      localStorage.setItem("user", data.user);
       localStorage.setItem("role", data.user?.role || "user");
-
       alert("Login Successful");
-
       if (data.user?.role === "admin") navigate("/admin");
       else if (data.user?.role === "organizer") navigate("/organizer");
       else navigate("/home");

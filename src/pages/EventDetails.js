@@ -2,17 +2,17 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import "../styles/user.css";
 import "../styles/eventDetails.css";
-import { getEventById } from "../data/events";
+//import { getEventById } from "../data/events";
 import defaultPic from "../assets/defaultPic.png";
-import {
+/* import {
   getRegistrationCount,
   isUserRegistered,
 } from "../utils/registrationStorage";
-import { useToast } from "../context/ToastContext";
+ */import { useToast } from "../context/ToastContext";
 
 const getUserId = () => {
   if (typeof window === "undefined") return null;
-  return window.localStorage.getItem("userId") || "12345";
+  return window.localStorage.getItem("user");
 };
 
 const getTone = (registered, capacity) => {
@@ -28,17 +28,34 @@ function EventDetails() {
   const [alreadyRegistered, setAlreadyRegistered] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
 
-  const event = useMemo(() => getEventById(id), [id]);
+  // const event = useMemo(() => getEventById(id), [id]);
+  const [event, setEvent] = useState(null);
   const userId = useMemo(() => getUserId(), []);
   const { push } = useToast();
 
   useEffect(() => {
+    const fetchEvent = async () => {
+      try {
+        const res = await fetch(`http://localhost:9999/api/events/${id}`);
+        if (!res.ok) throw new Error("Event not found");
+        const data = await res.json();
+        setEvent(data);
+      } catch (err) {
+        console.error(err);
+        setEvent(null);
+      }
+    };
+
+    fetchEvent();
+  }, [id]);
+
+  /*useEffect(() => {
     if (!event) return;
     setRegistrationCount(getRegistrationCount(event.id));
     if (userId) {
       setAlreadyRegistered(isUserRegistered(userId, event.id));
     }
-  }, [event, userId]);
+  }, [event, userId]);*/
 
   const availableSpots = event
     ? Math.max(event.capacity - registrationCount, 0)
@@ -301,7 +318,7 @@ function EventDetails() {
 
           <div className="event-summary-actions">
             {!alreadyRegistered && !isFull && (
-              <Link to={`/register/${event.id}`} className="btn btn--primary">
+              <Link to={`/register/${event.eventId}`} className="btn btn--primary">
                 Register Now
               </Link>
             )}
@@ -328,7 +345,7 @@ function EventDetails() {
 
       {showMobileCTA && (
         <div className="event-mobile-cta">
-          <Link to={`/register/${event.id}`} className="btn btn--primary">
+          <Link to={`/register/${event.eventId}`} className="btn btn--primary">
             Register Now
           </Link>
           <button type="button" className="btn btn--ghost" onClick={handleShare}>

@@ -1,18 +1,18 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "../styles/user.css";
-import { getEventById } from "../data/events";
+/* import { getEventById } from "../data/events";
 import {
   getRegistrationCount,
   isUserRegistered,
   registerUser,
-} from "../utils/registrationStorage";
+} from "../utils/registrationStorage"; */
 import { useToast } from "../context/ToastContext";
 import ReturnButton from "../components/ReturnButton";
 
 const getUserId = () => {
   if (typeof window === "undefined") return null;
-  return window.localStorage.getItem("userId") || "12345";
+  return window.localStorage.getItem("user");
 };
 
 function Registration() {
@@ -23,17 +23,56 @@ function Registration() {
   const navigate = useNavigate();
   const { id: eventId } = useParams(); // Get eventId from URL (e.g., /register/:id)
   const userId = useMemo(() => getUserId(), []);
-  const event = useMemo(() => getEventById(eventId), [eventId]);
+  //const event = useMemo(() => getEventById(eventId), [eventId]);
+  const [event, setEvent] = useState(null);
+  
   const { push } = useToast();
   const fallbackPath = event ? `/events/${event.id}` : "/home";
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (!event) return;
     setRegistrationCount(getRegistrationCount(event.id));
     if (userId) {
       setAlreadyRegistered(isUserRegistered(userId, event.id));
     }
-  }, [event, userId]);
+  }, [event, userId]); */
+  useEffect(() => {
+      const fetchEvent = async () => {
+        try {
+          const res = await fetch(`http://localhost:9999/api/events/${eventId}`);
+          if (!res.ok) throw new Error("Event not found");
+          const data = await res.json();
+          setEvent(data);
+        } catch (err) {
+          console.error(err);
+          setEvent(null);
+        }
+      };
+  
+      fetchEvent();
+    }, [eventId]);
+
+    useEffect(() => {
+      const fetchRegistration = async () => {
+      try {
+        const res = await fetch(
+          `http://localhost:9999/api/registrations/${eventId}`
+        );
+
+        if (!res.ok) return;
+
+        const data = await res.json();
+
+        setRegistrationCount(data.registeredAttendees);
+        setAlreadyRegistered(data.attendees.includes(userId));
+
+      } catch (err) {
+        console.error("Error fetching registration:", err);
+      }
+    };
+
+    fetchRegistration();
+  }, [eventId, userId]);
 
   useEffect(() => {
     if (!success) return;
@@ -56,7 +95,7 @@ function Registration() {
   const isFull = registrationCount >= event.capacity;
 
   // Handle event registration
-  const handleRegister = async () => {
+  /* const handleRegister = async () => {
     try {
       const result = registerUser(userId, event.id, event.capacity);
       if (!result.success) {
@@ -79,6 +118,43 @@ function Registration() {
         message: `${event.name} has been added to your events.`,
         tone: "success",
       });
+    } catch (error) {
+      console.error("Registration failed:", error);
+      push({
+        title: "Registration failed",
+        message: "Something went wrong. Please try again.",
+        tone: "danger",
+      });
+    }
+  }; */
+  const handleRegister = async () => {
+    try {
+      const res = await fetch("http://localhost:9999/api/registrations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          eventId,
+          userId,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setErrorMessage(data.message || "Registration failed");
+        return;
+      }
+
+      setSuccess(true);
+      setRegistrationCount(data.registration.registeredAttendees);
+      setAlreadyRegistered(true);
+
+      push({
+        title: "Registration confirmed",
+        message: `${event.name} has been added to your events.`,
+        tone: "success",
+      });
+
     } catch (error) {
       console.error("Registration failed:", error);
       push({
