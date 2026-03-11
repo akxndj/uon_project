@@ -1,35 +1,22 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import "../styles/user.css";
 import "../styles/eventDetails.css";
-//import { getEventById } from "../data/events";
-import defaultPic from "../assets/defaultPic.png";
-/* import {
-  getRegistrationCount,
-  isUserRegistered,
-} from "../utils/registrationStorage";
- */import { useToast } from "../context/ToastContext";
+import { useToast } from "../context/ToastContext";
 
 const getUserId = () => {
   if (typeof window === "undefined") return null;
   return window.localStorage.getItem("user");
 };
 
-const getTone = (registered, capacity) => {
-  if (!capacity) return "danger";
-  if (registered >= capacity) return "danger";
-  if (registered / capacity >= 0.75) return "warning";
-  return "info";
-};
-
 function EventDetails() {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const [event, setEvent] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [registrationCount, setRegistrationCount] = useState(0);
   const [alreadyRegistered, setAlreadyRegistered] = useState(false);
-  const [activeTab, setActiveTab] = useState("overview");
 
-  // const event = useMemo(() => getEventById(id), [id]);
-  const [event, setEvent] = useState(null);
   const userId = useMemo(() => getUserId(), []);
   const { push } = useToast();
 
@@ -39,41 +26,38 @@ function EventDetails() {
         const res = await fetch(`http://localhost:9999/api/events/${id}`);
         if (!res.ok) throw new Error("Event not found");
         const data = await res.json();
+        
         setEvent(data);
+        // Ensure this matches your API field name (e.g., registeredCount or currentParticipants)
+        setRegistrationCount(data.registeredCount || 0);
       } catch (err) {
-        console.error(err);
+        console.error("Fetch error:", err);
         setEvent(null);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchEvent();
   }, [id]);
 
-  /*useEffect(() => {
-    if (!event) return;
-    setRegistrationCount(getRegistrationCount(event.id));
-    if (userId) {
-      setAlreadyRegistered(isUserRegistered(userId, event.id));
-    }
-  }, [event, userId]);*/
+  if (loading) {
+    return <div className="admin-dashboard"><div className="admin-section">Loading event details...</div></div>;
+  }
 
-  const availableSpots = event
-    ? Math.max(event.capacity - registrationCount, 0)
-    : 0;
-  const isFull = event ? registrationCount >= event.capacity : false;
-
-  // If no event found
   if (!event) {
     return (
-      <div>
-        <h2>Event not found</h2>
-        {/* Link back to home */}
-        <Link to="/home">Back to Home</Link>
+      <div className="admin-dashboard">
+        <div className="admin-section">
+          <h2>Event not found</h2>
+          <Link to="/home">Back to Home</Link>
+        </div>
       </div>
     );
   }
 
-  const tone = getTone(registrationCount, event.capacity);
+  const isFull = registrationCount >= event.capacity;
+  const showMobileCTA = !alreadyRegistered && !isFull;
 
   const handleShare = async () => {
     const shareData = {
@@ -99,7 +83,6 @@ function EventDetails() {
         tone: "info",
       });
     } catch (error) {
-      console.error("Clipboard error", error);
       push({
         title: "Unable to copy",
         message: "Please copy the URL manually.",
@@ -108,120 +91,79 @@ function EventDetails() {
     }
   };
 
-  const handleAddToCalendar = () => {
-    const start = new Date(event.startTime || `${event.date}T09:00`);
-    const end = new Date(event.endTime || `${event.date}T11:00`);
-
-    const pad = (value) => value.toString().padStart(2, "0");
-    const toICSDate = (date) =>
-      `${date.getUTCFullYear()}${pad(date.getUTCMonth() + 1)}${pad(
-        date.getUTCDate()
-      )}T${pad(date.getUTCHours())}${pad(date.getUTCMinutes())}00Z`;
-
-    const ICS = `BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//UoN Event Platform//EN\nBEGIN:VEVENT\nUID:${event.id}@uon.edu.au\nDTSTAMP:${toICSDate(
-      new Date()
-    )}\nDTSTART:${toICSDate(start)}\nDTEND:${toICSDate(
-      end
-    )}\nSUMMARY:${event.name}\nDESCRIPTION:${event.description}\nLOCATION:${event.location}\nEND:VEVENT\nEND:VCALENDAR`;
-
-    const blob = new Blob([ICS], { type: "text/calendar;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `${event.name.replace(/\s+/g, "-")}.ics`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-
-    push({
-      title: "Calendar ready",
-      message: "Event added to your downloads as an .ics file.",
-      tone: "success",
-    });
-  };
-
-  const tabs = [
-    { id: "overview", label: "Overview" },
-    { id: "agenda", label: "Agenda", hidden: !event.agenda?.length },
-    { id: "faq", label: "FAQs", hidden: !event.faq?.length },
-    { id: "contact", label: "Contact" },
-  ].filter((tab) => !tab.hidden);
-
-  const showMobileCTA = !alreadyRegistered && !isFull;
-
   return (
-  <div className="admin-dashboard">
-    <div className="admin-section">
-
-      {/* Header */}
-      <div className="admin-header">
-        <div>
-          <h1 className="admin-title">{event.name}</h1>
-          <p className="admin-subtitle">
-            View event details and manage participation.
-          </p>
-        </div>
-      </div>
-
-      {/* 主体内容 */}
-      <div className="admin-list-scroll">
-        <div className="admin-card">
-          
-          <div className="admin-card__identity">
-            <p><strong>Date:</strong> {event.date}</p>
-            <p><strong>Location:</strong> {event.location}</p>
-            <p>
-              <strong>Participants:</strong>{" "}
-              {registrationCount}/{event.capacity}
+    <div className="admin-dashboard">
+      <div className="admin-section">
+        
+        {/* Header */}
+        <div className="admin-header">
+          <div>
+            <h1 className="admin-title">{event.name}</h1>
+            <p className="admin-subtitle">
+              View event details and manage participation.
             </p>
-            <p><strong>Maximum Capacity:</strong> {event.capacity}</p>
-            <p><strong>Description:</strong> {event.description}</p>
           </div>
+        </div>
 
-          <div className="event-summary-actions">
-            {!alreadyRegistered && !isFull && (
-              <Link to={`/register/${event.eventId}`} className="btn btn--primary">
+        {/* Main Content Area */}
+        <div className="admin-list-scroll">
+          <div className="admin-card">
+            <div className="admin-card__identity">
+              <p><strong>Date:</strong> {event.date}</p>
+              <p><strong>Location:</strong> {event.location}</p>
+              <p>
+                <strong>Participants:</strong> {registrationCount}/{event.capacity}
+              </p>
+              <p><strong>Maximum Capacity:</strong> {event.capacity}</p>
+              <p><strong>Description:</strong> {event.description}</p>
+            </div>
+
+            <div className="event-summary-actions">
+              {!alreadyRegistered && !isFull && (
+                <Link to={`/register/${event._id || event.id}`} className="btn btn--primary">
+                  Register Now
+                </Link>
+              )}
+              
+              <button
+                type="button"
+                className="btn btn--info"
+                onClick={handleShare}
+              >
+                Share
+              </button>
+
+              <button
+                type="button"
+                className="admin-btn danger"
+                onClick={() => navigate(-1)}
+              >
+                Back
+              </button>
+            </div>
+          </div> {/* End admin-card */}
+
+          {showMobileCTA && (
+            <div className="event-mobile-cta">
+              <Link to={`/register/${event._id || event.id}`} className="btn btn--primary">
                 Register Now
               </Link>
-            )}
-            <button
-              type="button"
-              className="btn btn--info"
-              onClick={handleShare}
-            >
-              Edit
-            </Link>
+              <button type="button" className="btn btn--ghost" onClick={handleShare}>
+                Share
+              </button>
+            </div>
+          )}
+        </div> {/* End admin-list-scroll */}
 
-            <button
-              type="button"
-              className="admin-btn danger"
-              onClick={() => window.history.back()}
-            >
-              Back
-            </button>
-          </div>
-
-      {showMobileCTA && (
-        <div className="event-mobile-cta">
-          <Link to={`/register/${event.eventId}`} className="btn btn--primary">
-            Register Now
+        {/* Footer */}
+        <div className="admin-footer">
+          <Link to="/organizer" className="view-all-btn">
+            Back to Dashboard
           </Link>
-          <button type="button" className="btn btn--ghost" onClick={handleShare}>
-            Share
-          </button>
         </div>
-      </div>
 
-      {/* Footer */}
-      <div className="admin-footer">
-        <Link to="/organizer" className="view-all-btn">
-          Back to Dashboard
-        </Link>
-      </div>
-
-    </div>
-  </div>
+      </div> {/* End admin-section */}
+    </div> /* End admin-dashboard */
   );
 }
 
