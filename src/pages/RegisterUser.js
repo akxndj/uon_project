@@ -17,31 +17,37 @@ function Register() {
   const { push } = useToast();
 
   // Handle register form submit
-  const handleRegister = async (e) => {
-    e.preventDefault();
+const handleRegister = async (e) => {
+  e.preventDefault();
 
-    try {
-      // Collect all registration data
-      const userData = {
-        firstName,
-        lastName,
-        username,
-        email,
-        studentId,
-        phone,
-        password,
-      };
+  try {
+    const userData = {
+      fName: firstName,
+      lName: lastName,
+      username: username,
+      email: email,
+      stdNo: studentId,
+      phone: Number(phone.replace(/\s/g, "")), // Removes spaces and converts to Number
+      password: password,
+      role: "user" // ADD THIS LINE to satisfy the 'required' rule in your model
+    };
 
-      console.log("Registering user:", userData);
+    console.log("Registering user:", userData);
 
-      // TODO: Replace with real API call
-      // await fetch("/api/register", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify(userData),
-      // });
+    const response = await fetch("http://localhost:9999/api/users", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(userData),
+    });
+    
+    // ... rest of your code
 
-      // Simulate successful registration
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Registration failed");
+      }
+
       push({
         title: "Account created",
         message: "Please sign in to continue.",
@@ -52,7 +58,7 @@ function Register() {
       console.error("Registration failed:", error);
       push({
         title: "Registration failed",
-        message: "Please try again.",
+        message: error.message || "Please try again.",
         tone: "danger",
       });
     }

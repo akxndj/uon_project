@@ -26,5 +26,5 @@ app.use("/api/login", authRouter);
 app.use("/api/registrations", registrationRouter);
 
 
-const port = process.env.port;
+const port = process.env.PORT;
 app.listen(port, () => console.log(`server running on ${port}`));
