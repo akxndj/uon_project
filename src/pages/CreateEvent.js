@@ -8,16 +8,41 @@ import ReturnButton from "../components/ReturnButton";
 function CreateEvent() {
   const navigate = useNavigate();
   const { push } = useToast();
+const handleSubmit = async (formData) => {
+  try {
 
-  const handleSubmit = async (payload) => {
-    console.log("New event data:", payload);
+    const eventId = Date.now().toString();
+    formData.append("eventId", eventId);
+
+    const response = await fetch("http://localhost:9999/api/events", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message);
+    }
+
     push({
       title: "Event created",
-      message: `"${payload.name}" is now ready to publish.`,
+      message: `"${data.event.name}" is now ready to publish.`,
       tone: "success",
     });
+
     navigate("/organizer");
-  };
+
+  } catch (error) {
+    console.error(error);
+
+    push({
+      title: "Error",
+      message: "Failed to create event",
+      tone: "danger",
+    });
+  }
+};
 
   return (
     <div className="organizer-page">

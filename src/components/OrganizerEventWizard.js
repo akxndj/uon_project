@@ -146,55 +146,69 @@ const OrganizerEventWizard = ({
         time: item.time,
         title: item.title,
       }));
+    
 
-    const payload = {
-      ...form,
-      capacity: Number(form.capacity),
-      startTime: form.startTime
-        ? `${form.date}T${form.startTime}`
-        : form.startTime,
-      endTime: form.endTime ? `${form.date}T${form.endTime}` : form.endTime,
-      agenda: cleanedAgenda,
-    };
+const formData = new FormData();
 
-    await onSubmit(payload);
+formData.append("name", form.name);
+formData.append("description", form.description);
+formData.append("date", form.date);
+formData.append("location", form.location);
+formData.append("capacity", form.capacity);
+formData.append("fee", form.fee);
+formData.append("eligibility", form.eligibility);
+formData.append("included", form.includes);
+formData.append("createdBy", "organizer");
+formData.append("registered", 0);
+
+if (form.image) {
+  formData.append("image", form.image);
+}
+
+cleanedAgenda.forEach((item, index) => {
+  formData.append(`agenda[${index}][time]`, item.time);
+  formData.append(`agenda[${index}][title]`, item.title);
+});
+
+await onSubmit(formData);
   };
 
   const renderBasics = () => (
-    <div className="wizard-panel">
-      <div className="form-group">
-        <label>Event Name *</label>
-        <input
-          type="text"
-          value={form.name}
-          onChange={(event) => updateField("name", event.target.value)}
-        />
-        {errors.name && <span className="field-error">{errors.name}</span>}
-      </div>
-
-      <div className="form-group">
-        <label>Description *</label>
-        <textarea
-          rows="4"
-          value={form.description}
-          onChange={(event) => updateField("description", event.target.value)}
-        />
-        {errors.description && (
-          <span className="field-error">{errors.description}</span>
-        )}
-      </div>
-
-      <div className="form-group">
-        <label>Hero Image URL</label>
-        <input
-          type="text"
-          value={form.image}
-          onChange={(event) => updateField("image", event.target.value)}
-          placeholder="/images/my-event.jpg"
-        />
-      </div>
+  <div className="wizard-panel">
+    <div className="form-group">
+      <label>Event Name *</label>
+      <input
+        type="text"
+        value={form.name}
+        onChange={(event) => updateField("name", event.target.value)}
+      />
+      {errors.name && <span className="field-error">{errors.name}</span>}
     </div>
-  );
+
+    <div className="form-group">
+      <label>Description *</label>
+      <textarea
+        rows="4"
+        value={form.description}
+        onChange={(event) => updateField("description", event.target.value)}
+      />
+      {errors.description && (
+        <span className="field-error">{errors.description}</span>
+      )}
+    </div>
+
+    <div className="form-group">
+      <label>Upload Event Image</label>
+      <input
+        type="file"
+        accept="image/*"
+        onChange={(event) =>
+          updateField("image", event.target.files[0])
+        }
+      />
+    </div>
+  </div>
+);
 
   const renderSchedule = () => (
     <div className="wizard-panel">
