@@ -16,6 +16,7 @@ function AdminEventsPage() {
       participants: getRegistrationCount(event.id),
     }))
   );
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const refreshParticipants = () => {
@@ -28,6 +29,8 @@ function AdminEventsPage() {
     };
 
     refreshParticipants();
+    setLoading(false);
+
     if (typeof window === "undefined") return undefined;
     const handleStorage = ({ key }) => {
       if (key === "eventRegistrations") {
@@ -116,6 +119,14 @@ function AdminEventsPage() {
       }).length,
     [eventList]
   );
+  if (loading) {
+  return (
+    <div className="loading">
+      Loading events...
+    </div>
+  );
+}
+  
 
   return (
   <div className="admin-dashboard">

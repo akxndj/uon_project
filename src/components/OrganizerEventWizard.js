@@ -197,16 +197,29 @@ await onSubmit(formData);
       )}
     </div>
 
-    <div className="form-group">
-      <label>Upload Event Image</label>
-      <input
-        type="file"
-        accept="image/*"
-        onChange={(event) =>
-          updateField("image", event.target.files[0])
-        }
-      />
-    </div>
+<div className="form-group">
+  <label>Upload Event Image</label>
+
+  <input
+    type="file"
+    accept="image/*"
+    onChange={(event) =>
+      updateField("image", event.target.files[0])
+    }
+  />
+
+  {form.image && (
+    <img
+      src={URL.createObjectURL(form.image)}
+      alt="preview"
+      style={{
+        width: "250px",
+        marginTop: "10px",
+        borderRadius: "8px"
+      }}
+    />
+  )}
+</div>
   </div>
 );
 

@@ -1,3 +1,4 @@
+import defaultEvent from "../assets/defaultPic.png";
 import React from "react";
 import { Link } from "react-router-dom";
 import EventStatusBadge from "./EventStatusBadge";
@@ -40,7 +41,14 @@ const EventCard = ({ event }) => {
   return (
     <article className="event-card">
       <div className="event-card__media">
-        <img src={image} alt={name} loading="lazy" />
+        <img
+  src={image || defaultEvent}
+  alt={name}
+  loading="lazy"
+  onError={(e) => {
+    e.target.src = defaultEvent;
+  }}
+/>
         <EventStatusBadge tone={tone} />
       </div>
 

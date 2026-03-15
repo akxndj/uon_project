@@ -453,3 +453,12 @@
   background: #d1d5db;
   border-radius: 4px;
 }
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+  font-size: 18px;
+  font-weight: 500;
+  color: #666;
+}

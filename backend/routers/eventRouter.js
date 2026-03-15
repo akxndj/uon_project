@@ -7,7 +7,7 @@ const router = express.Router();
 // GET /api/events -> get all events
 router.get("/", async (req, res) => {
   try {
-    const events = await Event.find();
+    const events = await Event.find().sort({ createdAt: -1 });
     res.json(events);
   } catch (error) {
     res.status(500).json({ message: "Error fetching events", error });
