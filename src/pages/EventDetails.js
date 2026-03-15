@@ -11,6 +11,7 @@ const getUserId = () => {
 
 function EventDetails() {
   const { id } = useParams();
+  console.log("Event ID from URL:", id);
   const navigate = useNavigate();
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -21,22 +22,35 @@ function EventDetails() {
   const { push } = useToast();
 
   useEffect(() => {
-    const fetchEvent = async () => {
-      try {
-        const res = await fetch(`http://localhost:9999/api/events/${id}`);
-        if (!res.ok) throw new Error("Event not found");
-        const data = await res.json();
-        
-        setEvent(data);
-        // Ensure this matches your API field name (e.g., registeredCount or currentParticipants)
-        setRegistrationCount(data.registeredCount || 0);
-      } catch (err) {
-        console.error("Fetch error:", err);
-        setEvent(null);
-      } finally {
-        setLoading(false);
-      }
-    };
+const fetchEvent = async () => {
+
+  try {
+
+    const res = await fetch(`http://localhost:9999/api/events/${id}`);
+
+    const data = await res.json();
+
+    console.log("Loaded event:", data);
+
+    if (!data || data.message) {
+      setEvent(null);
+    } else {
+      setEvent(data);
+      setRegistrationCount(data.registered || 0);
+    }
+
+  } catch (err) {
+
+    console.error("Fetch error:", err);
+    setEvent(null);
+
+  } finally {
+
+    setLoading(false);
+
+  }
+
+};
 
     fetchEvent();
   }, [id]);
@@ -120,7 +134,7 @@ function EventDetails() {
 
             <div className="event-summary-actions">
               {!alreadyRegistered && !isFull && (
-                <Link to={`/register/${event._id || event.id}`} className="btn btn--primary">
+                <Link to={`/register/${event._id || event._id}`} className="btn btn--primary">
                   Register Now
                 </Link>
               )}
@@ -145,7 +159,7 @@ function EventDetails() {
 
           {showMobileCTA && (
             <div className="event-mobile-cta">
-              <Link to={`/register/${event._id || event.id}`} className="btn btn--primary">
+              <Link to={`/register/${event._id || event._id}`} className="btn btn--primary">
                 Register Now
               </Link>
               <button type="button" className="btn btn--ghost" onClick={handleShare}>
@@ -157,7 +171,7 @@ function EventDetails() {
 
         {/* Footer */}
         <div className="admin-footer">
-          <Link to="/organizer" className="view-all-btn">
+          <Link to="/admin" className="view-all-btn">
             Back to Dashboard
           </Link>
         </div>

@@ -51,12 +51,12 @@ function App() {
                 <Route path="/admin/users" element={<AdminUsersPage />} />
                 <Route
                   path="/admin/events/:id"
-                  element={<AdminEventDetails />}
+                  element={<EventDetails />}
                 />
 
                 {/* User routes */}
                 <Route path="/home" element={<Home />} />
-                <Route path="/events/:id" element={<EventDetails />} />
+                <Route path="/admin/events/:id" element={<EventDetails />} />
                 <Route path="/register/:id" element={<Registration />} />
                 <Route path="/user" element={<UserDashboard />} />
                 <Route

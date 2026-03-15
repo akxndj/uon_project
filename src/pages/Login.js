@@ -2,11 +2,6 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/user.css";
 
-/**
- * Frontend MOCK switch
- * true  = use mock login (NO backend / NO MongoDB)
- * false = use real backend API
- */
 const USE_MOCK = false;
 
 function Login() {
@@ -17,8 +12,7 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    //MOCK LOGIN (Frontend Only)
-
+    /* MOCK LOGIN */
     if (USE_MOCK) {
       const mockUser = {
         id: "u1",
@@ -33,36 +27,44 @@ function Login() {
 
       console.log("MOCK LOGIN:", mockUser);
 
-      // Redirect based on role (optional)
-      if (mockUser.role === "admin") navigate("/admin", { replace: true });
-      else if (mockUser.role === "organizer") navigate("/organizer", { replace: true });
-      else navigate("/home", { replace: true });
+      if (mockUser.role === "admin") navigate("/admin");
+      else if (mockUser.role === "organizer") navigate("/organizer");
+      else navigate("/home");
+
       return;
     }
 
-    /* =========================
-       REAL BACKEND LOGIN
-       ========================= */
+    /* REAL LOGIN */
     try {
       const response = await fetch("http://localhost:9999/api/login", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({ email, password }),
       });
 
       const data = await response.json();
+      console.log("Login response:", data);
 
       if (!response.ok) {
         throw new Error(data.message || "Login Failed");
       }
 
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", data.user);
-      localStorage.setItem("role", data.user?.role || "user");
+      // Save login data
+      localStorage.setItem("user", JSON.stringify(data.user));
+      localStorage.setItem("role", data.user.role);
+
       alert("Login Successful");
-      if (data.user?.role === "admin") navigate("/admin");
-      else if (data.user?.role === "organizer") navigate("/organizer");
-      else navigate("/home");
+
+      // Redirect based on role
+      if (data.user.role === "admin") {
+        navigate("/admin");
+      } else if (data.user.role === "organizer") {
+        navigate("/organizer");
+      } else {
+        navigate("/home");
+      }
 
     } catch (error) {
       console.error("Login error:", error);
@@ -93,7 +95,7 @@ function Login() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="any password"
+              placeholder="password"
               required
             />
           </div>
@@ -105,7 +107,7 @@ function Login() {
 
         {USE_MOCK && (
           <p style={{ marginTop: "10px", fontSize: "12px", color: "#888" }}>
-            MOCK MODE ENABLED (Frontend only)
+            MOCK MODE ENABLED
           </p>
         )}
       </div>

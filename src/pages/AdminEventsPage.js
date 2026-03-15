@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import "../styles/admin.css";
-import events from "../data/events";
 import { getRegistrationCount } from "../utils/registrationStorage";
 import { useToast } from "../context/ToastContext";
 import { useModal } from "../context/ModalContext";
@@ -10,12 +9,16 @@ function AdminEventsPage() {
   const { push } = useToast();
   const { confirm } = useModal();
   const [query, setQuery] = useState("");
-  const [eventList, setEvents] = useState(
-    events.map((event) => ({
-      ...event,
-      participants: getRegistrationCount(event.id),
-    }))
-  );
+const [eventList, setEvents] = useState([]);
+useEffect(() => {
+  fetch("http://localhost:9999/api/events")
+    .then((res) => res.json())
+    .then((data) => {
+      setEvents(data);
+      setLoading(false);
+    })
+    .catch((err) => console.error(err));
+}, []);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -23,7 +26,7 @@ function AdminEventsPage() {
       setEvents((current) =>
         current.map((event) => ({
           ...event,
-          participants: getRegistrationCount(event.id),
+          participants: getRegistrationCount(event._id),
         }))
       );
     };
@@ -43,7 +46,7 @@ function AdminEventsPage() {
 
   // Handle delete confirmation
   const handleDelete = async (id) => {
-    const targetEvent = eventList.find((event) => event.id === id);
+    const targetEvent = eventList.find((event) => event._id === id);
     const approved = await confirm({
       title: `Remove ${targetEvent?.name || "this event"}?`,
       description:
@@ -60,7 +63,11 @@ function AdminEventsPage() {
             </p>
             <ul className="modal-details__list">
               <li>
-                <span>Date:</span> {targetEvent.date}
+              {new Date(targetEvent.date).toLocaleDateString("en-AU", {
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+})}
               </li>
               <li>
                 <span>Location:</span> {targetEvent.location}
@@ -78,13 +85,33 @@ function AdminEventsPage() {
 
     if (!approved) return;
 
+try {
+
+  await fetch(`http://localhost:9999/api/events/${id}`, {
+    method: "DELETE"
+  });
+
+  setEvents((prev) =>
+    prev.filter((event) => event._id !== id)
+  );
+
+  push({
+    title: "Event deleted",
+    message: `${targetEvent?.name || "Event"} has been removed.`,
+    tone: "info",
+  });
+
+} catch (err) {
+  console.error(err);
+}
+
     let deletedName = "";
     setEvents((current) => {
-      const target = current.find((event) => event.id === id);
+      const target = current.find((event) => event._id === id);
       if (target) {
         deletedName = target.name;
       }
-      return current.filter((event) => event.id !== id);
+      return current.filter((event) => event._id !== id);
     });
     if (deletedName) {
       push({
@@ -172,7 +199,7 @@ function AdminEventsPage() {
       <div className="admin-list-scroll">
         <div className="admin-list">
           {filteredEvents.map((event) => (
-            <div className="admin-card" key={event.id}>
+            <div className="admin-card" key={event._id}>
               <div className="admin-card__identity">
                 <strong>{event.name}</strong>
                 <p className="admin-card__meta">
@@ -187,14 +214,14 @@ function AdminEventsPage() {
 
               <div className="admin-buttons">
                 <Link
-                  to={`/admin/events/${event.id}`}
+                  to={`/admin/events/${event._id}`}
                   className="admin-btn primary"
                 >
                   View
                 </Link>
 
                 <Link
-                  to={`/admin/edit-event/${event.id}`}
+                  to={`/admin/edit-event/${event._id}`}
                   className="admin-btn"
                 >
                   Edit
@@ -202,7 +229,7 @@ function AdminEventsPage() {
 
                 <button
                   className="admin-btn danger"
-                  onClick={() => handleDelete(event.id)}
+                  onClick={() => handleDelete(event._id)}
                 >
                   Delete
                 </button>

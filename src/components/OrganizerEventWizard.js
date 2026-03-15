@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect} from "react";
 import { Link } from "react-router-dom";
 import "../styles/organizer.css";
 
@@ -48,6 +48,11 @@ const OrganizerEventWizard = ({
   const [form, setForm] = useState(() => createInitialData(initialData));
   const [stepIndex, setStepIndex] = useState(0);
   const [errors, setErrors] = useState({});
+  React.useEffect(() => {
+  if (initialData) {
+    setForm(createInitialData(initialData));
+  }
+}, [initialData]);
 
   const steps = useMemo(
     () => [

@@ -4,6 +4,7 @@ import "../styles/admin.css";
 import { useToast } from "../context/ToastContext";
 
 function AdminEditEvent() {
+
   const { id } = useParams();
   const navigate = useNavigate();
   const { push } = useToast();
@@ -17,55 +18,84 @@ function AdminEditEvent() {
     fee: "",
     includes: "",
     image: "",
-    capacity: "",
+    capacity: ""
   });
 
+  // LOAD EVENT FROM DATABASE
   useEffect(() => {
-    const existingEvent = {
-      id,
-      name: "AI Seminar",
-      date: "2025-05-12",
-      location: "NUspace Room 401",
-      description: "Explore the future of Artificial Intelligence.",
-      eligibility: "All students & staff",
-      fee: "$10",
-      includes: "Certificate & refreshments",
-      image: "/defaultPic.png",
-      capacity: 150,
+
+    const loadEvent = async () => {
+
+      try {
+
+        const res = await fetch(`http://localhost:9999/api/events/${id}`);
+        const data = await res.json();
+
+        setEventData(data);
+
+      } catch (err) {
+
+        console.error(err);
+
+      }
+
     };
-    setEventData(existingEvent);
+
+    loadEvent();
+
   }, [id]);
 
   const handleChange = (e) => {
+
     const { name, value } = e.target;
-    setEventData({ ...eventData, [name]: value });
-  };
 
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setEventData({ ...eventData, image: imageUrl });
-    }
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Updated Event:", eventData);
-    push({
-      title: "Event updated",
-      message: `"${eventData.name}" details have been saved.`,
-      tone: "success",
+    setEventData({
+      ...eventData,
+      [name]: value
     });
-    navigate("/admin");
+
+  };
+
+  const handleSubmit = async (e) => {
+
+    e.preventDefault();
+
+    try {
+
+      await fetch(`http://localhost:9999/api/events/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(eventData)
+      });
+
+      push({
+        title: "Event updated",
+        message: `"${eventData.name}" details saved.`,
+        tone: "success"
+      });
+
+      navigate("/admin/events");
+
+    } catch (err) {
+
+      console.error(err);
+
+    }
+
   };
 
   return (
+
     <div className="admin-edit-page">
+
       <div className="form-card">
+
         <h1>Edit Event</h1>
 
         <form onSubmit={handleSubmit}>
+
           <div className="form-group">
             <label>Event Name</label>
             <input
@@ -82,7 +112,7 @@ function AdminEditEvent() {
             <input
               type="date"
               name="date"
-              value={eventData.date}
+              value={eventData.date?.slice(0,10)}
               onChange={handleChange}
               required
             />
@@ -107,7 +137,7 @@ function AdminEditEvent() {
               onChange={handleChange}
               rows="4"
               required
-            ></textarea>
+            />
           </div>
 
           <div className="form-group">
@@ -127,7 +157,6 @@ function AdminEditEvent() {
               name="fee"
               value={eventData.fee}
               onChange={handleChange}
-              placeholder="e.g. Free / $10 / $25"
             />
           </div>
 
@@ -153,28 +182,10 @@ function AdminEditEvent() {
             />
           </div>
 
-          <div className="form-group">
-            <label>Event Image</label>
-            <input type="file" accept="image/*" onChange={handleImageUpload} />
-            {eventData.image && (
-              <div style={{ marginTop: "10px" }}>
-                <img
-                  src={eventData.image}
-                  alt="Preview"
-                  style={{
-                    width: "200px",
-                    height: "auto",
-                    borderRadius: "8px",
-                    boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
-                  }}
-                />
-              </div>
-            )}
-          </div>
-
           <button type="submit" className="admin-action-btn">
             Save Changes
           </button>
+
         </form>
 
         <div style={{ marginTop: "15px", textAlign: "center" }}>
@@ -182,9 +193,13 @@ function AdminEditEvent() {
             ← Back to Dashboard
           </Link>
         </div>
+
       </div>
+
     </div>
+
   );
+
 }
 
 export default AdminEditEvent;
