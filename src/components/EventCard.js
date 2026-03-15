@@ -97,10 +97,10 @@ const EventCard = ({ event }) => {
       </div>
 
       <footer className="event-card__footer">
-        <Link to={`/events/${eventId}`} className="btn btn--primary">
+        <Link to={`/events/${event._id}`} className="btn btn--primary">
           View Details
         </Link>
-        <Link to={`/register/${eventId}`} className="btn btn--secondary">
+        <Link to={`/register/${event._id}`} className="btn btn--secondary">
           Register
         </Link>
       </footer>

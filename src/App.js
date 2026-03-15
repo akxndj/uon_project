@@ -56,6 +56,7 @@ function App() {
 
                 {/* User routes */}
                 <Route path="/home" element={<Home />} />
+                <Route path="/events/:id" element={<EventDetails />} />
                 <Route path="/admin/events/:id" element={<EventDetails />} />
                 <Route path="/register/:id" element={<Registration />} />
                 <Route path="/user" element={<UserDashboard />} />
@@ -85,5 +86,6 @@ function App() {
     </ToastProvider>
   );
 }
+
 
 export default App;

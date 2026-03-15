@@ -37,7 +37,7 @@ function Home() {
 
       const eventsWithRegistrations = data.map((event) => ({
         ...event,
-        registrations: getRegistrationCount(event.eventId),
+        registrations: getRegistrationCount(event._id),
       }));
 
       setEvents(eventsWithRegistrations);
@@ -89,7 +89,7 @@ function Home() {
 
       <section className="home-grid">
         {filteredEvents.length ? (
-          filteredEvents.map((event) => <EventCard key={event.id} event={event} />)
+          filteredEvents.map((event) => <EventCard key={event._id} event={event} />)
         ) : (
           <div className="home-empty">
             <h3>No events match your filters</h3>

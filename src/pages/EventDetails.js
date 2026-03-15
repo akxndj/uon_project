@@ -72,6 +72,7 @@ const fetchEvent = async () => {
 
   const isFull = registrationCount >= event.capacity;
   const showMobileCTA = !alreadyRegistered && !isFull;
+  const isAdmin = localStorage.getItem("role") === "admin";
 
   const handleShare = async () => {
     const shareData = {
@@ -134,9 +135,9 @@ const fetchEvent = async () => {
 
             <div className="event-summary-actions">
               {!alreadyRegistered && !isFull && (
-                <Link to={`/register/${event._id || event._id}`} className="btn btn--primary">
-                  Register Now
-                </Link>
+              <Link to={`/register/${event._id}`} className="btn btn--primary">
+  Register Now
+</Link>
               )}
               
               <button
@@ -171,9 +172,11 @@ const fetchEvent = async () => {
 
         {/* Footer */}
         <div className="admin-footer">
-          <Link to="/admin" className="view-all-btn">
-            Back to Dashboard
-          </Link>
+          {isAdmin && (
+  <Link to="/admin" className="view-all-btn">
+    Back to Dashboard
+  </Link>
+)}
         </div>
 
       </div> {/* End admin-section */}
