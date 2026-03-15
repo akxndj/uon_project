@@ -12,21 +12,13 @@ function AdminDashboard() {
         <div className="admin-menu">
           {/* Manage Events */}
           <Link to="/admin/events" className="admin-menu-card">
-            <img
-              src="/images/admin-events.png"
-              alt="Manage Events"
-              className="admin-menu-img"
-            />
+            <div className="admin-menu-icon">📅</div>
             <h2>Manage Events</h2>
           </Link>
 
           {/* Manage Users */}
           <Link to="/admin/users" className="admin-menu-card">
-            <img
-              src="/images/admin-users.png"
-              alt="Manage Users"
-              className="admin-menu-img"
-            />
+            <div className="admin-menu-icon">👥</div>
             <h2>Manage Users</h2>
           </Link>
         </div>
