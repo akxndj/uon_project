@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import "../styles/admin.css";
 import { useToast } from "../context/ToastContext";
@@ -16,104 +16,134 @@ const normalizeRoles = (roles) => {
 };
 
 function AdminUsersPage() {
-  const [users, setUsers] = useState([
-    { id: 1, name: "Alice", roles: ["user"] },
-    { id: 2, name: "Bob", roles: ["user", "organizer"] },
-    { id: 3, name: "Charlie", roles: ["user"] },
-    { id: 4, name: "Diana", roles: ["user", "organizer"] },
-    { id: 5, name: "Ethan", roles: ["user", "organizer", "admin"] },
-    { id: 6, name: "Fiona", roles: ["user"] },
-    { id: 7, name: "Grace", roles: ["user"] },
-    { id: 8, name: "Henry", roles: ["user"] },
-  ]);
 
+  const [users, setUsers] = useState([]);
   const { push } = useToast();
   const { confirm } = useModal();
 
-  const toggleRole = (id, role, enabled) => {
-    const updatedUsers = users.map((user) => {
-      if (user.id !== id) return user;
-      const current = normalizeRoles(user.roles || []);
-      let next = current;
+  useEffect(() => {
+    fetch("http://localhost:9999/api/users")
+      .then((res) => res.json())
+      .then((data) => setUsers(data))
+      .catch((err) => console.error(err));
+  }, []);
 
-      if (role === "user") {
-        next = current;
-      } else if (enabled) {
-        next = normalizeRoles([...current, role]);
-      } else {
-        next = current.filter((r) => r !== role);
-        next = normalizeRoles(next);
-      }
 
-      return { ...user, roles: next };
-    });
+  // UPDATE USER ROLE
+  const toggleRole = async (id, role, enabled) => {
 
-    setUsers(updatedUsers);
+    const newRole = enabled ? role : "user";
 
-    const updatedUser = updatedUsers.find((user) => user.id === id);
-    push({
-      title: "Roles updated",
-      message: `${updatedUser?.name} now has ${updatedUser?.roles.join(", ")} access.`,
-      tone: "success",
-    });
+    try {
+
+      await fetch(`http://localhost:9999/api/users/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ role: newRole })
+      });
+
+      setUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          user._id === id ? { ...user, role: newRole } : user
+        )
+      );
+
+      push({
+        title: "Role Updated",
+        message: `User role changed to ${newRole}`,
+        tone: "info"
+      });
+
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  const handleDelete = async (id) => {
-    const target = users.find((user) => user.id === id);
 
-    const approved = await confirm({
-      title: "Delete user?",
-      body: (
-        <p>
-          Are you sure you want to remove{" "}
-          <strong>{target?.name}</strong>? They will lose access immediately.
-        </p>
-      ),
-      confirmLabel: "Delete user",
-      cancelLabel: "Cancel",
-      tone: "danger",
+  // DELETE USER
+const handleDelete = async (id) => {
+
+  const target = users.find((user) => user._id === id);
+
+  const approved = await confirm({
+    title: "Delete user?",
+    body: (
+      <p>
+        Are you sure you want to remove{" "}
+        <strong>{target?.firstName} {target?.lastName}</strong>?
+      </p>
+    ),
+    confirmLabel: "Delete user",
+    cancelLabel: "Cancel",
+    tone: "danger",
+  });
+
+  if (!approved) return;
+
+  try {
+
+    await fetch(`http://localhost:9999/api/users/${id}`, {
+      method: "DELETE"
     });
 
-    if (!approved) return;
-
-    setUsers(users.filter((user) => user.id !== id));
+    setUsers(users.filter((user) => user._id !== id));
 
     push({
       title: "User deleted",
-      message: `${target?.name} has been removed.`,
+      message: `${target?.firstName} has been removed.`,
+      tone: "info",
+    });
+
+  } catch (err) {
+    console.error(err);
+  };
+
+    if (!approved) return;
+
+    setUsers(users.filter((user) => user._id !== id));
+
+    push({
+      title: "User deleted",
+      message: `${target?.firstName} has been removed.`,
       tone: "info",
     });
   };
+
 
   const normalizedUsers = useMemo(
     () =>
       users.map((user) => ({
         ...user,
-        roles: normalizeRoles(user.roles || []),
+        roles: normalizeRoles(user.roles ? user.roles : [user.role]),
       })),
     [users]
   );
+
 
   return (
     <div className="admin-dashboard">
       <div className="admin-section">
 
-        {/* 固定 Header */}
         <div className="admin-header">
           <h1 className="admin-title">Manage Users</h1>
           <p className="admin-subtitle">
-            Each account includes user access. Organizer adds event creation, 
+            Each account includes user access. Organizer adds event creation,
             and admin includes all permissions.
           </p>
         </div>
 
-        {/* 可滚动区域 */}
+
         <div className="admin-list-scroll">
           <div className="admin-list">
+
             {normalizedUsers.map((user) => (
-              <div className="admin-card" key={user.id}>
+              <div className="admin-card" key={user._id}>
+
                 <div className="admin-card__identity">
-                  <strong>{user.name}</strong>
+                  <strong>{user.firstName} {user.lastName}</strong>
+
                   <div className="role-list">
                     {user.roles.map((role) => (
                       <span
@@ -126,8 +156,11 @@ function AdminUsersPage() {
                   </div>
                 </div>
 
+
                 <div className="admin-buttons">
+
                   <div className="admin-role-group">
+
                     <label className="role-toggle">
                       <input type="checkbox" checked disabled />
                       User
@@ -138,7 +171,7 @@ function AdminUsersPage() {
                         type="checkbox"
                         checked={user.roles.includes("organizer")}
                         onChange={(e) =>
-                          toggleRole(user.id, "organizer", e.target.checked)
+                          toggleRole(user._id, "organizer", e.target.checked)
                         }
                       />
                       Organizer
@@ -149,26 +182,31 @@ function AdminUsersPage() {
                         type="checkbox"
                         checked={user.roles.includes("admin")}
                         onChange={(e) =>
-                          toggleRole(user.id, "admin", e.target.checked)
+                          toggleRole(user._id, "admin", e.target.checked)
                         }
                       />
                       Admin
                     </label>
+
                   </div>
+
 
                   <button
                     className="admin-btn danger"
-                    onClick={() => handleDelete(user.id)}
+                    onClick={() => handleDelete(user._id)}
                   >
                     Delete
                   </button>
+
                 </div>
+
               </div>
             ))}
+
           </div>
         </div>
 
-        {/* 固定 Footer */}
+
         <div className="admin-footer">
           <Link to="/admin" className="view-all-btn">
             Back to Dashboard
