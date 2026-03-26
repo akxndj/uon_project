@@ -248,6 +248,21 @@
   justify-content: center;
   font-size: 0.85rem;
 }
+.wizard-panel textarea {
+  width: 100%;
+  min-height: 180px;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  resize: vertical;
+}
+
+.wizard-panel textarea:focus {
+  border-color: #f57c00;
+  outline: none;
+}
 
 .wizard-step__label {
   white-space: nowrap;

@@ -178,7 +178,7 @@ cleanedAgenda.forEach((item, index) => {
 await onSubmit(formData);
   };
 
-  const renderBasics = () => (
+const renderBasics = () => (
   <div className="wizard-panel">
     <div className="form-group">
       <label>Event Name *</label>
@@ -193,38 +193,40 @@ await onSubmit(formData);
     <div className="form-group">
       <label>Description *</label>
       <textarea
-        rows="4"
+        rows="6"
+        className="event-textarea"
         value={form.description}
         onChange={(event) => updateField("description", event.target.value)}
+        placeholder="Describe your event in detail..."
       />
       {errors.description && (
         <span className="field-error">{errors.description}</span>
       )}
     </div>
 
-<div className="form-group">
-  <label>Upload Event Image</label>
+    <div className="form-group">
+      <label>Upload Event Image</label>
 
-  <input
-    type="file"
-    accept="image/*"
-    onChange={(event) =>
-      updateField("image", event.target.files[0])
-    }
-  />
+      <input
+        type="file"
+        accept="image/*"
+        onChange={(event) =>
+          updateField("image", event.target.files[0])
+        }
+      />
 
-  {form.image && (
-    <img
-      src={URL.createObjectURL(form.image)}
-      alt="preview"
-      style={{
-        width: "250px",
-        marginTop: "10px",
-        borderRadius: "8px"
-      }}
-    />
-  )}
-</div>
+      {form.image && (
+        <img
+          src={URL.createObjectURL(form.image)}
+          alt="preview"
+          style={{
+            width: "250px",
+            marginTop: "10px",
+            borderRadius: "8px"
+          }}
+        />
+      )}
+    </div>
   </div>
 );
 
