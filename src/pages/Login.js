@@ -105,11 +105,7 @@ function Login() {
           </button>
         </form>
 
-        {USE_MOCK && (
-          <p style={{ marginTop: "10px", fontSize: "12px", color: "#888" }}>
-            MOCK MODE ENABLED
-          </p>
-        )}
+        {USE_MOCK && <p className="form-note">MOCK MODE ENABLED</p>}
       </div>
     </div>
   );

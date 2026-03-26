@@ -2,6 +2,7 @@
 
 :root {
   --color-primary: #f57c00;
+  --color-primary-strong: #de6f00;
   --color-secondary: #ffb81c;
   --color-neutral-100: #f8fafc;
   --color-neutral-200: #e4e8ee;
@@ -11,13 +12,13 @@
   --color-success: #16a34a;
   --color-warning: #d97706;
   --color-danger: #dc2626;
+  --color-danger-strong: #b91c1c;
   --color-info: #0284c7;
+  --color-info-strong: #0369a1;
 
-  --font-heading: system-ui, -apple-system, BlinkMacSystemFont,
-  "Segoe UI", Arial, sans-serif;
-
-  --font-body: system-ui, -apple-system, BlinkMacSystemFont,
-  "Segoe UI", Arial, sans-serif;
+  --font-heading: "Playfair Display", serif;
+  --font-body: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Arial, sans-serif;
 
   --radius-sm: 6px;
   --radius-md: 12px;

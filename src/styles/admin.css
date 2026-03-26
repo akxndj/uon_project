@@ -5,7 +5,7 @@
 }
 
 .admin-title {
-  font-size: 28px;
+  font-size: 1.75rem;
   font-weight: bold;
   color: var(--color-primary);
   margin-bottom: 20px;
@@ -58,9 +58,9 @@
 }
 
 .admin-section h2 {
-  font-size: 20px;
+  font-size: 1.25rem;
   margin-bottom: 15px;
-  color: #333;
+  color: var(--color-neutral-800);
 }
 
 /* Card list */
@@ -72,7 +72,7 @@
 
 /* Card item */
 .admin-card {
-  background: #f9f9f9;
+  background: rgba(248, 250, 252, 0.95);
   border-radius: 8px;
   padding: 15px 20px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
@@ -85,8 +85,8 @@
 
 .admin-card p {
   margin: 0;
-  font-size: 15px;
-  color: #333;
+  font-size: 0.95rem;
+  color: var(--color-neutral-800);
 }
 
 .admin-card__identity {
@@ -107,7 +107,7 @@
   padding: 4px 10px;
   border-radius: 999px;
   background: rgba(2, 132, 199, 0.08);
-  color: #0369a1;
+  color: var(--color-info);
   font-size: 0.8rem;
   font-weight: 600;
 }
@@ -123,7 +123,7 @@
   align-items: center;
   padding: 4px 10px;
   border-radius: 999px;
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -133,19 +133,19 @@
 .role-chip--user {
   background: rgba(2, 132, 199, 0.1);
   border-color: rgba(2, 132, 199, 0.2);
-  color: #0369a1;
+  color: var(--color-info);
 }
 
 .role-chip--organizer {
   background: rgba(245, 124, 0, 0.15);
   border-color: rgba(245, 124, 0, 0.3);
-  color: #9a4d00;
+  color: var(--color-primary);
 }
 
 .role-chip--admin {
   background: rgba(220, 38, 38, 0.12);
   border-color: rgba(220, 38, 38, 0.25);
-  color: #b91c1c;
+  color: var(--color-danger);
 }
 
 /* Button group */
@@ -163,17 +163,17 @@
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: bold;
-  background: #e0e0e0;
-  color: black;
+  background: var(--color-neutral-200);
+  color: var(--color-neutral-800);
   text-decoration: none;
   transition: background 0.2s;
 }
 
 .admin-btn:hover {
-  background: #ccc;
-  color: black;
+  background: var(--color-neutral-400);
+  color: var(--color-neutral-800);
   text-decoration: none;
 }
 
@@ -184,17 +184,17 @@
 }
 
 .admin-btn.primary:hover {
-  background: #de6f00;
+  background: var(--color-primary-strong);
 }
 
 /* Danger button */
 .admin-btn.danger {
-  background: #d32f2f;
+  background: var(--color-danger);
   color: white;
 }
 
 .admin-btn.danger:hover {
-  background: #9a0007;
+  background: var(--color-danger-strong);
 }
 
 /* Create button */
@@ -205,7 +205,7 @@
 }
 
 .admin-btn.create:hover {
-  background: #de6f00;
+  background: var(--color-primary-strong);
 }
 
 .admin-role-group {
@@ -222,7 +222,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 13px;
+  font-size: 0.8rem;
   font-weight: 600;
   color: var(--color-neutral-600);
 }
@@ -282,7 +282,7 @@
 .admin-grid {
   display: grid;
   grid-template-columns: 1fr 1fr; /* Left and right */
-  gap: 20px;
+  gap: var(--spacing-lg);
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -299,7 +299,7 @@
   display: inline-block;
   margin-top: 15px; /* Space from above cards */
   padding: 8px 16px;
-  background-color: #2e7d32;
+  background-color: var(--color-primary);
   color: white;
   border: none;
   border-radius: 6px;
@@ -310,7 +310,7 @@
 }
 
 .view-all-btn:hover {
-  background-color: #2e7d32;
+  background-color: var(--color-primary-strong);
 }
 
 /* ==================== Admin Menu Page ==================== */
@@ -346,13 +346,13 @@
 }
 
 .admin-menu-icon {
-  font-size: 45px;
+  font-size: 2.8rem;
   margin-bottom: 15px;
 }
 
 .admin-menu-card h2 {
-  color: #2e7d32;
-  font-size: 20px;
+  color: var(--color-primary);
+  font-size: 1.25rem;
   font-weight: bold;
 }
 
@@ -377,7 +377,7 @@
 
 /* Title */
 .admin-edit-page .form-card h1 {
-  color: #2e7d32;
+  color: var(--color-primary);
   text-align: center;
   font-weight: bold;
   margin-bottom: 20px;
@@ -388,23 +388,23 @@
   width: 100%;
   min-height: 100px;
   padding: 8px 12px;
-  border: 1px solid #ccc;
+  border: 1px solid rgba(148, 163, 184, 0.4);
   border-radius: 6px;
   resize: none;
   font-family: inherit;
-  font-size: 14px;
+  font-size: 0.875rem;
   box-sizing: border-box;
 }
 
 /* Green action button */
 .admin-action-btn {
-  background-color: #2e7d32;
+  background-color: var(--color-primary);
   color: white;
   padding: 10px 20px;
   border: none;
   border-radius: 6px;
   font-weight: bold;
-  font-size: 14px;
+  font-size: 0.875rem;
   cursor: pointer;
   transition: background 0.2s ease;
   display: inline-block;
@@ -412,7 +412,7 @@
 }
 
 .admin-action-btn:hover {
-  background-color: #1b5e20;
+  background-color: var(--color-primary-strong);
 }
 
 .admin-section {
@@ -448,7 +448,7 @@
 }
 
 .admin-list-scroll::-webkit-scrollbar-thumb {
-  background: #d1d5db;
+  background: var(--color-neutral-200);
   border-radius: 4px;
 }
 .loading {
@@ -456,7 +456,7 @@
   justify-content: center;
   align-items: center;
   height: 300px;
-  font-size: 18px;
+  font-size: 1.125rem;
   font-weight: 500;
-  color: #666;
+  color: var(--color-neutral-600);
 }

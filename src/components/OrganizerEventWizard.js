@@ -193,7 +193,7 @@ const renderBasics = () => (
     <div className="form-group">
       <label>Description *</label>
       <textarea
-        rows="6"
+        rows="8"
         className="event-textarea"
         value={form.description}
         onChange={(event) => updateField("description", event.target.value)}
