@@ -2,6 +2,14 @@ import React, { useMemo, useState, useEffect} from "react";
 import { Link } from "react-router-dom";
 import "../styles/organizer.css";
 
+const getUserId = () => {
+  if (typeof window === "undefined") return null;
+  const user = JSON.parse(localStorage.getItem("user"));
+  return user?.studentId || null;
+};
+
+const userId = getUserId();
+
 const createInitialData = (data) => {
   const fallbackAgenda = [{ time: "", title: "" }];
 
@@ -163,7 +171,7 @@ formData.append("capacity", form.capacity);
 formData.append("fee", form.fee);
 formData.append("eligibility", form.eligibility);
 formData.append("included", form.includes);
-formData.append("createdBy", "organizer");
+formData.append("createdBy", userId);
 formData.append("registered", 0);
 
 if (form.image) {
