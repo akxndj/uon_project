@@ -1,8 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/organizer.css";
-import eventsCatalogue from "../data/events";
-import { getRegistrationCount } from "../utils/registrationStorage";
 import { useToast } from "../context/ToastContext";
 import { useModal } from "../context/ModalContext";
 
@@ -10,6 +8,12 @@ const parseDate = (value) => {
   if (!value) return null;
   const date = new Date(value);
   return Number.isNaN(date.getTime()) ? null : date;
+};
+
+const getUserId = () => {
+  if (typeof window === "undefined") return null;
+  const user = JSON.parse(localStorage.getItem("user"));
+  return user?.studentId || null;
 };
 
 const getStatus = (event) => {
@@ -35,33 +39,29 @@ function OrganizerDashboard() {
   const navigate = useNavigate();
   const { push } = useToast();
   const { confirm } = useModal();
-  const [eventList, setEvents] = useState(() =>
-    eventsCatalogue.map((event) => ({
-      ...event,
-      participants: getRegistrationCount(event.id),
-      status: getStatus(event),
-    }))
-  );
-
+  const [eventList, setEvents] = useState([]);
   useEffect(() => {
-    const refresh = () => {
-      setEvents(
-        eventsCatalogue.map((event) => ({
+    const fetchEvents = async() => {
+      try{
+        const res = await fetch("http://localhost:9999/api/events");
+        if(!res.ok) throw new Error("failed to fetch events");
+        const data = await res.json();
+        const events = Array.isArray(data) ? data : data.events;
+        const enrichedEvent = events.map((event) => ({
           ...event,
-          participants: getRegistrationCount(event.id),
+          participants: event.registered,
+          capacity: event.capacity,
           status: getStatus(event),
-        }))
-      );
-    };
-    refresh();
-    if (typeof window === "undefined") return undefined;
-    const handleStorage = ({ key }) => {
-      if (key === "eventRegistrations") {
-        refresh();
+        }));
+        const userId = getUserId();
+        const myEvents = enrichedEvent.filter((event)=>event.createdBy === userId);
+        setEvents(myEvents);
+      }
+      catch (err){
+        console.error("failed to fetch", err);
       }
     };
-    window.addEventListener("storage", handleStorage);
-    return () => window.removeEventListener("storage", handleStorage);
+    fetchEvents();
   }, []);
 
   const metrics = useMemo(() => {
@@ -223,7 +223,7 @@ function OrganizerDashboard() {
                     </div>
                     <footer>
                       <Link
-                        to={`/organizer/events/${event.id}`}
+                        to={`/organizer/events/${event._id}`}
                         className="btn btn--secondary"
                       >
                         View
@@ -231,14 +231,14 @@ function OrganizerDashboard() {
                       <button
                         type="button"
                         className="btn btn--ghost"
-                        onClick={() => handleEdit(event.id)}
+                        onClick={() => handleEdit(event._id)}
                       >
                         Edit
                       </button>
                       <button
                         type="button"
                         className="btn btn--danger"
-                        onClick={() => handleDelete(event.id)}
+                        onClick={() => handleDelete(event._id)}
                       >
                         Delete
                       </button>

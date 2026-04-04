@@ -2,12 +2,12 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import "../styles/user.css";
 import defaultPic from "../assets/defaultPic.png";
-import { getEventById } from "../data/events";
+/* import { getEventById } from "../data/events";
 import {
   cancelRegistration as cancelStoredRegistration,
   getUserRegistrations,
   getRegistrationCount,
-} from "../utils/registrationStorage";
+} from "../utils/registrationStorage"; */
 import { useToast } from "../context/ToastContext";
 import { useModal } from "../context/ModalContext";
 
@@ -21,7 +21,8 @@ const capacityTone = (registrations, capacity) => {
 
 const getUserId = () => {
   if (typeof window === "undefined") return null;
-  return window.localStorage.getItem("userId") || "12345";
+  const user = JSON.parse(localStorage.getItem("user"));
+  return user?.studentId || null;
 };
 
 function UserDashboard() {
@@ -30,41 +31,36 @@ function UserDashboard() {
   const { push } = useToast();
   const { confirm } = useModal();
 
-  const loadRegistrations = () => {
-    if (!userId) {
-      setRegistrations([]);
-      return;
+  const fetchEvents = async () => {
+    try {
+      const response = await fetch("http://localhost:9999/api/registrations");
+      const data = await response.json();
+
+     const userEvents = data
+      .filter((reg) =>
+      reg.attendees.some((att) => att.studentId === userId)
+      )
+      .map((reg) => reg.eventId);
+
+      
+      const eventPromises = userEvents.map((eventId) =>
+        fetch(`http://localhost:9999/api/events/${eventId}`).then((res) => res.json())
+      );
+
+      const events = await Promise.all(eventPromises);
+      setRegistrations(events);
+    } catch (error) {
+      console.error("Error fetching events:", error);
     }
-
-    const eventIds = getUserRegistrations(userId);
-    const detailedEvents = eventIds
-      .map((eventId) => getEventById(eventId))
-      .filter(Boolean)
-      .map((event) => ({
-        ...event,
-        registrationCount: getRegistrationCount(event.id),
-      }));
-    setRegistrations(detailedEvents);
   };
-
   useEffect(() => {
-    loadRegistrations();
-    if (typeof window === "undefined") return undefined;
-    // Re-run when storage updates via other tabs
-    const handleStorage = ({ key }) => {
-      if (key === "eventRegistrations") {
-        loadRegistrations();
-      }
-    };
-
-    window.addEventListener("storage", handleStorage);
-    return () => window.removeEventListener("storage", handleStorage);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userId]);
+    fetchEvents();
+  }, []);
 
   const upcoming = registrations.filter((event) => {
-    const eventDate = new Date(event.startTime || `${event.date}T09:00`);
+    const eventDate = new Date(event.startTime || event.date);
     return eventDate >= new Date();
+    
   });
 
   const past = registrations.filter((event) => {
@@ -76,8 +72,8 @@ function UserDashboard() {
     () =>
       [...upcoming].sort(
         (a, b) =>
-          new Date(a.startTime || `${a.date}T09:00`) -
-          new Date(b.startTime || `${b.date}T09:00`)
+          new Date(a.startTime || a.date) -
+          new Date(b.startTime || b.date)
       ),
     [upcoming]
   );
@@ -85,54 +81,60 @@ function UserDashboard() {
   const nextEvent = sortedUpcoming[0];
 
   const cancelRegistration = async (event) => {
-    if (!userId) return;
-    const approved = await confirm({
-      title: `Cancel ${event.name}?`,
-      description: "You'll lose your seat and may need to re-register if spots remain.",
-      confirmLabel: "Cancel registration",
-      cancelLabel: "Keep my seat",
-      tone: "warning",
-      size: "sm",
-      render: () => (
-        <div className="modal-details">
-          <p>
-            Are you sure you want to cancel your registration for{" "}
-            <strong>{event.name}</strong>?
-          </p>
-          <ul className="modal-details__list">
-            <li>
-              <span>Date:</span> {event.date}
-            </li>
-            <li>
-              <span>Location:</span> {event.location}
-            </li>
-            <li>
-              <span>Capacity:</span> {event.capacity}
-            </li>
-            <li>
-              <span>Currently Registered:</span> {event.registrationCount}
-            </li>
-          </ul>
-        </div>
-      ),
-    });
+  if (!userId) return;
 
-    if (!approved) return;
+  const approved = await confirm({
+    title: `Cancel ${event.name}?`,
+    description: "You'll lose your seat and may need to re-register if spots remain.",
+    confirmLabel: "Cancel registration",
+    cancelLabel: "Keep my seat",
+    tone: "warning",
+    size: "sm",
+  });
 
-    cancelStoredRegistration(userId, event.id);
-    loadRegistrations();
+  if (!approved) return;
+
+  try {
+    const response = await fetch(
+      `http://localhost:9999/api/registrations/${event._id}`,
+      {
+        method: "POST", 
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId }),
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message);
+    }
+
+
+    fetchEvents();
+
     push({
       title: "Registration cancelled",
       message: `You are no longer attending ${event.name}.`,
       tone: "info",
     });
+
+  } catch (err) {
+    push({
+      title: "Error",
+      message: err.message || "Failed to cancel registration",
+      tone: "error",
+    });
+  }
   };
 
   const handleShare = async (event) => {
     const shareData = {
       title: event.name,
       text: event.description,
-      url: `${window.location.origin}/events/${event.id}`,
+      url: `${window.location.origin}/events/${event._id}`,
     };
 
     if (navigator.share) {
@@ -170,7 +172,7 @@ function UserDashboard() {
         date.getUTCDate()
       )}T${pad(date.getUTCHours())}${pad(date.getUTCMinutes())}00Z`;
 
-    const ICS = `BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//UoN Event Platform//EN\nBEGIN:VEVENT\nUID:${event.id}@uon.edu.au\nDTSTAMP:${toICSDate(
+    const ICS = `BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//UoN Event Platform//EN\nBEGIN:VEVENT\nUID:${event._id}@uon.edu.au\nDTSTAMP:${toICSDate(
       new Date()
     )}\nDTSTART:${toICSDate(start)}\nDTEND:${toICSDate(
       end
@@ -231,7 +233,7 @@ function UserDashboard() {
               </p>
               <div className="user-highlight__actions">
                 <Link
-                  to={`/events/${nextEvent.id}`}
+                  to={`/events/${nextEvent._id}`}
                   className="btn btn--secondary"
                 >
                   View Details
@@ -273,7 +275,7 @@ function UserDashboard() {
                 event.capacity
               );
               return (
-                <article className="user-card" key={event.id}>
+                <article className="user-card" key={event._id}>
                   <div className="user-card__media">
                     <img src={event.image || defaultPic} alt={event.name} />
                     <span className={`badge badge--${tone}`}>
@@ -312,7 +314,7 @@ function UserDashboard() {
                   </div>
                   <footer className="user-card__actions">
                     <Link
-                      to={`/events/${event.id}`}
+                      to={`/events/${event._id}`}
                       className="btn btn--secondary"
                     >
                       View Details
@@ -331,13 +333,13 @@ function UserDashboard() {
                     >
                       Share
                     </button>
-                    <button
+                   {<button
                       type="button"
                       className="btn btn--danger"
                       onClick={() => cancelRegistration(event)}
                     >
                       Cancel Registration
-                    </button>
+                    </button> }
                   </footer>
                 </article>
               );
