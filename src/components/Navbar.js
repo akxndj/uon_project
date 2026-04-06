@@ -26,6 +26,7 @@ const navConfig = {
     { label: "Admin Panel", to: "/admin" },
     { label: "All Events", to: "/admin/events" },
     { label: "Manage Users", to: "/admin/users" },
+    { label: "Reports", to: "/admin/reports" }
   ],
 };
 

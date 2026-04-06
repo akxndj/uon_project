@@ -105,7 +105,50 @@ const fetchEvent = async () => {
       });
     }
   };
+const handleReport = async () => {
+  const reason = prompt("Enter report reason:");
+  if (!reason) return;
 
+  // ✅ FIX: get full user object
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  // ❗ VERY IMPORTANT
+  if (!user || !user.id) {
+    alert("User not found. Please login again.");
+    return;
+  }
+
+  const userId = user.id;
+
+  console.log("Sending report:", {
+    eventId: event._id,
+    userId,
+    reason,
+  });
+
+  try {
+    const res = await fetch("http://localhost:9999/api/reports", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        eventId: event._id,
+        userId, // ✅ NOW INCLUDED
+        reason,
+      }),
+    });
+
+    const data = await res.json();
+    console.log("Response:", data);
+
+    alert("Report submitted successfully");
+
+  } catch (err) {
+    console.error(err);
+    alert("Error submitting report");
+  }
+};
   return (
     <div className="admin-dashboard">
       <div className="admin-section">
@@ -139,7 +182,7 @@ const fetchEvent = async () => {
   Register Now
 </Link>
               )}
-              
+              <button onClick={handleReport}>Report</button>
               <button
                 type="button"
                 className="btn btn--info"
