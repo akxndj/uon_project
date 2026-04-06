@@ -4,6 +4,8 @@ function AdminReports() {
   const [reports, setReports] = useState([]);
   const [eventsMap, setEventsMap] = useState({});
   const [usersMap, setUsersMap] = useState({});
+  const [confirmModal, setConfirmModal] = useState(false);
+  const [selectedReport, setSelectedReport] = useState(null);
 
   const fetchReports = async () => {
     try {
@@ -55,9 +57,29 @@ function AdminReports() {
     fetchReports();
   }, []);
 
-  const updateStatus = async (id, status) => {
+  const handleAcceptClick = (report) => {
+    setSelectedReport(report);
+    setConfirmModal(true);
+  };
+
+  const confirmAccept = async () => {
+    if (!selectedReport) return;
+
+    await fetch(`http://localhost:9999/api/reports/${selectedReport._id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ status: "accepted" }),
+    });
+
+    setConfirmModal(false);
+    window.location.href = "/admin/events";
+  };
+
+  const updateStatus = async (report, status) => {
     try {
-      await fetch(`http://localhost:9999/api/reports/${id}`, {
+      await fetch(`http://localhost:9999/api/reports/${report._id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -69,6 +91,34 @@ function AdminReports() {
     } catch (err) {
       console.error(err);
     }
+  };
+
+  const overlayStyle = {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    background: "rgba(0,0,0,0.5)",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 1000,
+  };
+
+  const modalStyle = {
+    background: "#fff",
+    padding: "20px",
+    borderRadius: "10px",
+    width: "350px",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+  };
+
+  const btn = {
+    padding: "6px 12px",
+    borderRadius: "5px",
+    border: "none",
+    color: "white",
   };
 
   return (
@@ -91,21 +141,20 @@ function AdminReports() {
             }}
           >
             <div style={{ display: "flex", justifyContent: "space-between" }}>
-              
               <div>
                 <p>
-  <strong>Event:</strong>{" "}
-  <a
-    href={`/events/${report.eventId}`}
-    style={{
-      color: "#007bff",
-      textDecoration: "underline",
-      cursor: "pointer"
-    }}
-  >
-    {eventsMap[report.eventId] || "Loading..."}
-  </a>
-</p>
+                  <strong>Event:</strong>{" "}
+                  <a
+                    href={`/events/${report.eventId}`}
+                    style={{
+                      color: "#007bff",
+                      textDecoration: "underline",
+                      cursor: "pointer"
+                    }}
+                  >
+                    {eventsMap[report.eventId] || "Loading..."}
+                  </a>
+                </p>
                 <p><strong>User:</strong> {usersMap[report.userId] || "Loading..."}</p>
                 <p><strong>Reason:</strong> {report.reason}</p>
               </div>
@@ -134,51 +183,31 @@ function AdminReports() {
                   {report.status.toUpperCase()}
                 </span>
               </div>
-
             </div>
 
             <div style={{ marginTop: "15px" }}>
               {report.status === "pending" && (
                 <>
                   <button
-                    onClick={() => updateStatus(report._id, "accepted")}
-                    style={{
-                      marginRight: "10px",
-                      background: "#28a745",
-                      color: "white",
-                      border: "none",
-                      padding: "6px 12px",
-                      borderRadius: "5px",
-                    }}
+                    onClick={() => handleAcceptClick(report)}
+                    style={{ ...btn, background: "#28a745", marginRight: "10px" }}
                   >
                     Accept
                   </button>
 
                   <button
-                    onClick={() => updateStatus(report._id, "rejected")}
-                    style={{
-                      background: "#dc3545",
-                      color: "white",
-                      border: "none",
-                      padding: "6px 12px",
-                      borderRadius: "5px",
-                    }}
+                    onClick={() => updateStatus(report, "rejected")}
+                    style={{ ...btn, background: "#dc3545" }}
                   >
                     Reject
                   </button>
                 </>
               )}
 
-              {report.status !== "pending" && (
+              {report.status === "rejected" && (
                 <button
-                  onClick={() => updateStatus(report._id, "pending")}
-                  style={{
-                    background: "#6c757d",
-                    color: "white",
-                    border: "none",
-                    padding: "6px 12px",
-                    borderRadius: "5px",
-                  }}
+                  onClick={() => updateStatus(report, "pending")}
+                  style={{ ...btn, background: "#6c757d" }}
                 >
                   Undo
                 </button>
@@ -187,6 +216,33 @@ function AdminReports() {
           </div>
         ))}
       </div>
+
+      {confirmModal && (
+        <div style={overlayStyle}>
+          <div style={modalStyle}>
+            <h3>Confirm Action</h3>
+            <p style={{ marginTop: "10px" }}>
+              You will be redirected to Manage Events to edit or delete this event.
+            </p>
+
+            <div style={{ marginTop: "15px", textAlign: "right" }}>
+              <button
+                onClick={() => setConfirmModal(false)}
+                style={{ ...btn, background: "#6c757d", marginRight: "10px" }}
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={confirmAccept}
+                style={{ ...btn, background: "#28a745" }}
+              >
+                Continue
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
