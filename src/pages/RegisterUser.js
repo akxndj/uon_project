@@ -5,7 +5,6 @@ import { useToast } from "../context/ToastContext";
 import ReturnButton from "../components/ReturnButton";
 
 function Register() {
-  // Form state
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");
@@ -13,52 +12,75 @@ function Register() {
   const [studentId, setStudentId] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+
   const navigate = useNavigate();
   const { push } = useToast();
 
-  // Handle register form submit
-const handleRegister = async (e) => {
-  e.preventDefault();
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  try {
-    const userData = {
-      fName: firstName,
-      lName: lastName,
-      username: username,
-      email: email,
-      stdNo: studentId,
-      phone: Number(phone.replace(/\s/g, "")), // Removes spaces and converts to Number
-      password: password,
-      role: "user" // ADD THIS LINE to satisfy the 'required' rule in your model
-    };
+  const validate = () => {
+    const newErrors = {};
 
-    console.log("Registering user:", userData);
+    if (!firstName.trim()) newErrors.firstName = "Required";
 
-    const response = await fetch("http://localhost:9999/api/users", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(userData),
-    });
-    
-    // ... rest of your code
+    if (!lastName.trim()) newErrors.lastName = "Required";
+
+    if (username.length < 3) newErrors.username = "Min 3 characters";
+
+    if (!emailRegex.test(email)) newErrors.email = "Invalid email";
+
+    if (!/^\d+$/.test(studentId)) newErrors.studentId = "Numbers only";
+
+    if (phone.replace(/\D/g, "").length !== 10)
+      newErrors.phone = "Must be 10 digits";
+
+    if (password.length < 6)
+      newErrors.password = "Min 6 characters";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+
+    if (!validate()) return;
+
+    try {
+      const userData = {
+        fName: firstName,
+        lName: lastName,
+        username,
+        email,
+        stdNo: studentId,
+        phone: Number(phone.replace(/\D/g, "")),
+        password,
+        role: "user",
+      };
+
+      const response = await fetch("http://localhost:9999/api/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(userData),
+      });
 
       const result = await response.json();
 
-      if (!response.ok) {
-        throw new Error(result.message || "Registration failed");
-      }
+      if (!response.ok) throw new Error(result.message);
 
       push({
         title: "Account created",
         message: "Please sign in to continue.",
         tone: "success",
       });
+
       navigate("/login");
     } catch (error) {
-      console.error("Registration failed:", error);
       push({
         title: "Registration failed",
-        message: error.message || "Please try again.",
+        message: error.message,
         tone: "danger",
       });
     }
@@ -70,94 +92,88 @@ const handleRegister = async (e) => {
         <ReturnButton fallback="/login" />
         <h1>Register Account</h1>
 
-        {/* Register form */}
         <form onSubmit={handleRegister}>
-          {/* First Name */}
           <div className="form-group">
             <label>First Name:</label>
             <input
-              type="text"
+              className={errors.firstName ? "input-error" : ""}
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
-              required
             />
+            {errors.firstName && <span className="error-text">{errors.firstName}</span>}
           </div>
 
-          {/* Last Name */}
           <div className="form-group">
             <label>Last Name:</label>
             <input
-              type="text"
+              className={errors.lastName ? "input-error" : ""}
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
-              required
             />
+            {errors.lastName && <span className="error-text">{errors.lastName}</span>}
           </div>
 
-          {/* Username */}
           <div className="form-group">
             <label>Username:</label>
             <input
-              type="text"
+              className={errors.username ? "input-error" : ""}
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="Choose a unique username"
-              required
             />
+            {errors.username && <span className="error-text">{errors.username}</span>}
           </div>
 
-          {/* Email */}
           <div className="form-group">
             <label>Email:</label>
             <input
-              type="email"
+              className={errors.email ? "input-error" : ""}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              required
             />
+            {errors.email && <span className="error-text">{errors.email}</span>}
           </div>
 
-          {/* Student ID */}
           <div className="form-group">
             <label>Student ID:</label>
             <input
-              type="text"
+              className={errors.studentId ? "input-error" : ""}
               value={studentId}
               onChange={(e) => setStudentId(e.target.value)}
-              required
             />
+            {errors.studentId && <span className="error-text">{errors.studentId}</span>}
           </div>
 
-          {/* Phone */}
           <div className="form-group">
-            <label>Phone Number:</label>
+            <label>Phone:</label>
             <input
-              type="tel"
+              className={errors.phone ? "input-error" : ""}
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              placeholder="e.g. 0412 345 678"
-              required
             />
+            {errors.phone && <span className="error-text">{errors.phone}</span>}
           </div>
 
-          {/* Password */}
           <div className="form-group">
             <label>Password:</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+            <div style={{ display: "flex", gap: "10px" }}>
+              <input
+                type={showPassword ? "text" : "password"}
+                className={errors.password ? "input-error" : ""}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <button type="button" onClick={() => setShowPassword(!showPassword)}>
+                👁
+              </button>
+            </div>
+            {errors.password && <span className="error-text">{errors.password}</span>}
           </div>
 
-          {/* Submit button */}
           <button type="submit" className="form-btn">
             Register
           </button>
         </form>
 
-        {/* Link to login page */}
         <p>
           Already have an account?{" "}
           <Link to="/login" className="form-link">

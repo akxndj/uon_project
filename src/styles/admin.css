@@ -346,8 +346,12 @@
 }
 
 .admin-menu-icon {
-  font-size: 2.8rem;
-  margin-bottom: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-size: 70px;
+  margin-bottom: 20px;
 }
 
 .admin-menu-card h2 {
@@ -442,7 +446,6 @@
   text-align: center;
 }
 
-/* 滚动条美化 */
 .admin-list-scroll::-webkit-scrollbar {
   width: 6px;
 }

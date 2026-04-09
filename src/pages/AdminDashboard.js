@@ -8,15 +8,12 @@ function AdminDashboard() {
       <div className="admin-dashboard">
         <h1 className="admin-title">Admin Dashboard</h1>
 
-        {/* Two big blocks for navigation */}
         <div className="admin-menu">
-          {/* Manage Events */}
           <Link to="/admin/events" className="admin-menu-card">
             <div className="admin-menu-icon">📅</div>
             <h2>Manage Events</h2>
           </Link>
 
-          {/* Manage Users */}
           <Link to="/admin/users" className="admin-menu-card">
             <div className="admin-menu-icon">👥</div>
             <h2>Manage Users</h2>
