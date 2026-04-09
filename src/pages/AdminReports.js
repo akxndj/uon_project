@@ -4,6 +4,7 @@ function AdminReports() {
   const [reports, setReports] = useState([]);
   const [eventsMap, setEventsMap] = useState({});
   const [usersMap, setUsersMap] = useState({});
+  const [organisersMap, setOrganisersMap] = useState({});
   const [confirmModal, setConfirmModal] = useState(false);
   const [selectedReport, setSelectedReport] = useState(null);
 
@@ -26,23 +27,47 @@ function AdminReports() {
   const fetchExtraData = async (reportsData) => {
     const events = {};
     const users = {};
+    const organisers = {};
 
     for (let r of reportsData) {
       if (!events[r.eventId]) {
         try {
-          const res = await fetch(`http://localhost:9999/api/events/${r.eventId}`);
-          const data = await res.json();
-          events[r.eventId] = data.name || "Unknown Event";
+          const eventRes = await fetch(
+            `http://localhost:9999/api/events/${r.eventId}`
+          );
+          const eventData = await eventRes.json();
+
+          events[r.eventId] = eventData.name || "Unknown Event";
+
+          if (eventData.createdBy) {
+            try {
+              const organiserRes = await fetch(
+                `http://localhost:9999/api/users/${eventData.createdBy}`
+              );
+              const organiserData = await organiserRes.json();
+
+              organisers[r.eventId] =
+                organiserData.email || "Unknown Organiser";
+            } catch {
+              organisers[r.eventId] = "Unknown Organiser";
+            }
+          } else {
+            organisers[r.eventId] = "Unknown Organiser";
+          }
         } catch {
           events[r.eventId] = "Deleted Event";
+          organisers[r.eventId] = "Unknown Organiser";
         }
       }
 
       if (!users[r.userId]) {
         try {
-          const res = await fetch(`http://localhost:9999/api/users/${r.userId}`);
-          const data = await res.json();
-          users[r.userId] = data.email || "Unknown User";
+          const userRes = await fetch(
+            `http://localhost:9999/api/users/${r.userId}`
+          );
+          const userData = await userRes.json();
+
+          users[r.userId] = userData.email || "Unknown User";
         } catch {
           users[r.userId] = "Unknown User";
         }
@@ -51,6 +76,7 @@ function AdminReports() {
 
     setEventsMap(events);
     setUsersMap(users);
+    setOrganisersMap(organisers);
   };
 
   useEffect(() => {
@@ -65,27 +91,37 @@ function AdminReports() {
   const confirmAccept = async () => {
     if (!selectedReport) return;
 
-    await fetch(`http://localhost:9999/api/reports/${selectedReport._id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ status: "accepted" }),
-    });
+    try {
+      await fetch(
+        `http://localhost:9999/api/reports/${selectedReport._id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ status: "accepted" }),
+        }
+      );
 
-    setConfirmModal(false);
-    window.location.href = "/admin/events";
+      setConfirmModal(false);
+      window.location.href = `/admin/events?highlight=${selectedReport.eventId}`;
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const updateStatus = async (report, status) => {
     try {
-      await fetch(`http://localhost:9999/api/reports/${report._id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ status }),
-      });
+      await fetch(
+        `http://localhost:9999/api/reports/${report._id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ status }),
+        }
+      );
 
       fetchReports();
     } catch (err) {
@@ -119,7 +155,20 @@ function AdminReports() {
     borderRadius: "5px",
     border: "none",
     color: "white",
+    cursor: "pointer",
   };
+
+const emailOrganiser = (email) => {
+  const subject = encodeURIComponent("Reported Event Issue");
+  const body = encodeURIComponent(
+    "Hello, your event has been reported. Please review it."
+  );
+
+  window.open(
+    `https://mail.google.com/mail/?view=cm&fs=1&to=${email}&su=${subject}&body=${body}`,
+    "_blank"
+  );
+};
 
   return (
     <div className="admin-dashboard">
@@ -128,114 +177,180 @@ function AdminReports() {
 
         {reports.length === 0 && <p>No reports found</p>}
 
-        {reports.map((report) => (
-          <div
-            key={report._id}
-            className="admin-card"
-            style={{
-              marginBottom: "20px",
-              padding: "15px",
-              borderRadius: "10px",
-              background: "#ffffff",
-              boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
-            }}
-          >
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <div>
-                <p>
-                  <strong>Event:</strong>{" "}
-                  <a
-                    href={`/events/${report.eventId}`}
+        <div
+          style={{
+            maxHeight: "600px",
+            overflowY: "auto",
+            paddingRight: "8px",
+          }}
+        >
+          {reports.map((report) => (
+            <div
+              key={report._id}
+              className="admin-card"
+              style={{
+                marginBottom: "20px",
+                padding: "15px",
+                borderRadius: "10px",
+                background: "#ffffff",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
+              >
+                <div>
+                  <p>
+                    <strong>Event:</strong>{" "}
+                    <a
+                      href={`/events/${report.eventId}`}
+                      style={{
+                        color: "#007bff",
+                        textDecoration: "underline",
+                        cursor: "pointer",
+                      }}
+                    >
+                      {eventsMap[report.eventId] || "Loading..."}
+                    </a>
+                  </p>
+
+                  <p>
+                    <strong>Reported By:</strong>{" "}
+                    {usersMap[report.userId] || "Loading..."}
+                  </p>
+
+                  <p>
+                    <strong>Organiser:</strong>{" "}
+                    {organisersMap[report.eventId] || "Loading..."}
+                  </p>
+
+                  <p>
+                    <strong>Reason:</strong> {report.reason}
+                  </p>
+                </div>
+
+                <div style={{ textAlign: "right" }}>
+                  <span
                     style={{
-                      color: "#007bff",
-                      textDecoration: "underline",
-                      cursor: "pointer"
+                      padding: "5px 10px",
+                      borderRadius: "20px",
+                      fontSize: "12px",
+                      fontWeight: "bold",
+                      background:
+                        report.status === "accepted"
+                          ? "#d4edda"
+                          : report.status === "rejected"
+                          ? "#f8d7da"
+                          : "#fff3cd",
+                      color:
+                        report.status === "accepted"
+                          ? "#155724"
+                          : report.status === "rejected"
+                          ? "#721c24"
+                          : "#856404",
                     }}
                   >
-                    {eventsMap[report.eventId] || "Loading..."}
-                  </a>
-                </p>
-                <p><strong>User:</strong> {usersMap[report.userId] || "Loading..."}</p>
-                <p><strong>Reason:</strong> {report.reason}</p>
+                    {report.status.toUpperCase()}
+                  </span>
+                </div>
               </div>
 
-              <div style={{ textAlign: "right" }}>
-                <span
-                  style={{
-                    padding: "5px 10px",
-                    borderRadius: "20px",
-                    fontSize: "12px",
-                    fontWeight: "bold",
-                    background:
-                      report.status === "accepted"
-                        ? "#d4edda"
-                        : report.status === "rejected"
-                        ? "#f8d7da"
-                        : "#fff3cd",
-                    color:
-                      report.status === "accepted"
-                        ? "#155724"
-                        : report.status === "rejected"
-                        ? "#721c24"
-                        : "#856404",
-                  }}
-                >
-                  {report.status.toUpperCase()}
-                </span>
+              <div style={{ marginTop: "15px" }}>
+                {report.status === "pending" && (
+                  <>
+                    <button
+                      onClick={() => handleAcceptClick(report)}
+                      style={{
+                        ...btn,
+                        background: "#28a745",
+                        marginRight: "10px",
+                      }}
+                    >
+                      Accept
+                    </button>
+
+                    <button
+                      onClick={() => updateStatus(report, "rejected")}
+                      style={{
+                        ...btn,
+                        background: "#dc3545",
+                        marginRight: "10px",
+                      }}
+                    >
+                      Reject
+                    </button>
+                  </>
+                )}
+
+                {report.status !== "pending" && (
+                  <button
+                    onClick={() => updateStatus(report, "pending")}
+                    style={{
+                      ...btn,
+                      background: "#6c757d",
+                      marginRight: "10px",
+                    }}
+                  >
+                    Undo
+                  </button>
+                )}
+
+                {organisersMap[report.eventId] &&
+                  organisersMap[report.eventId] !== "Unknown Organiser" && (
+                    <button
+                      onClick={() =>
+                        emailOrganiser(organisersMap[report.eventId])
+                      }
+                      style={{
+                        ...btn,
+                        background: "#007bff",
+                      }}
+                    >
+                      Email Organiser
+                    </button>
+                  )}
               </div>
             </div>
-
-            <div style={{ marginTop: "15px" }}>
-              {report.status === "pending" && (
-                <>
-                  <button
-                    onClick={() => handleAcceptClick(report)}
-                    style={{ ...btn, background: "#28a745", marginRight: "10px" }}
-                  >
-                    Accept
-                  </button>
-
-                  <button
-                    onClick={() => updateStatus(report, "rejected")}
-                    style={{ ...btn, background: "#dc3545" }}
-                  >
-                    Reject
-                  </button>
-                </>
-              )}
-
-              {report.status === "rejected" && (
-                <button
-                  onClick={() => updateStatus(report, "pending")}
-                  style={{ ...btn, background: "#6c757d" }}
-                >
-                  Undo
-                </button>
-              )}
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
       {confirmModal && (
         <div style={overlayStyle}>
           <div style={modalStyle}>
             <h3>Confirm Action</h3>
-            <p style={{ marginTop: "10px" }}>
-              You will be redirected to Manage Events to edit or delete this event.
+
+            <p style={{ marginTop: "10px", lineHeight: "1.5" }}>
+              If you accept this report, you will be redirected to Manage Events
+              and the reported event will be highlighted.
             </p>
 
-            <div style={{ marginTop: "15px", textAlign: "right" }}>
+            <div
+              style={{
+                marginTop: "15px",
+                textAlign: "right",
+              }}
+            >
               <button
                 onClick={() => setConfirmModal(false)}
-                style={{ ...btn, background: "#6c757d", marginRight: "10px" }}
+                style={{
+                  ...btn,
+                  background: "#6c757d",
+                  marginRight: "10px",
+                }}
               >
                 Cancel
               </button>
 
               <button
                 onClick={confirmAccept}
-                style={{ ...btn, background: "#28a745" }}
+                style={{
+                  ...btn,
+                  background: "#28a745",
+                }}
               >
                 Continue
               </button>

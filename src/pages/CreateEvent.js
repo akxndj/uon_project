@@ -8,41 +8,43 @@ import ReturnButton from "../components/ReturnButton";
 function CreateEvent() {
   const navigate = useNavigate();
   const { push } = useToast();
-const handleSubmit = async (formData) => {
-  try {
 
-    const eventId = Date.now().toString();
-    formData.append("eventId", eventId);
+  const handleSubmit = async (formData) => {
+    try {
+      const eventId = Date.now().toString();
+      const user = JSON.parse(localStorage.getItem("user"));
 
-    const response = await fetch("http://localhost:9999/api/events", {
-      method: "POST",
-      body: formData,
-    });
+      formData.set("eventId", eventId);
+      formData.set("createdBy", user.id);
 
-    const data = await response.json();
+      const response = await fetch("http://localhost:9999/api/events", {
+        method: "POST",
+        body: formData,
+      });
 
-    if (!response.ok) {
-      throw new Error(data.message);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message);
+      }
+
+      push({
+        title: "Event created",
+        message: `"${data.event.name}" is now ready to publish.`,
+        tone: "success",
+      });
+
+      navigate("/organizer");
+    } catch (error) {
+      console.error(error);
+
+      push({
+        title: "Error",
+        message: "Failed to create event",
+        tone: "danger",
+      });
     }
-
-    push({
-      title: "Event created",
-      message: `"${data.event.name}" is now ready to publish.`,
-      tone: "success",
-    });
-
-    navigate("/organizer");
-
-  } catch (error) {
-    console.error(error);
-
-    push({
-      title: "Error",
-      message: "Failed to create event",
-      tone: "danger",
-    });
-  }
-};
+  };
 
   return (
     <div className="organizer-page">

@@ -32,7 +32,7 @@ const createInitialData = (data) => {
     capacity: data?.capacity ? String(data.capacity) : "",
     fee: data?.fee || "",
     includes: data?.includes || "",
-    eligibility: data?.eligibility || "",
+    eligibility: data?.eligibility || "All students",
     contact: {
       name: data?.contact?.name || "",
       email: data?.contact?.email || "",
