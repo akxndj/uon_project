@@ -3,7 +3,6 @@ import Users from "../models/userModel.js";
 
 const router = express.Router();
 
-
 // GET /api/users  → get all users (for admin dashboard)
 router.get("/", async (req, res) => {
   try {
@@ -14,6 +13,24 @@ router.get("/", async (req, res) => {
     res.status(500).json({ message: "Error fetching users" });
   }
 });
+
+// GET /api/users/:id → get single user
+router.get("/:id", async (req, res) => {
+  try {
+    const user = await Users.findById(req.params.id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json(user);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error fetching user" });
+  }
+});
+
 // UPDATE user role
 router.put("/:id", async (req, res) => {
   try {
@@ -42,7 +59,7 @@ router.post("/", async (req, res) => {
       studentId: req.body.stdNo,
       phone: req.body.phone,
       password: req.body.password,
-      role: req.body.role || "user" // Ensure the role is assigned here
+      role: req.body.role || "user"
     });
 
     const savedUser = await newUser.save();
@@ -52,10 +69,10 @@ router.post("/", async (req, res) => {
     res.status(500).json({ message: "Error Adding the User", error: err.message });
   }
 });
-// DELETE /api/users/:id  → delete user
+
+// DELETE /api/users/:id → delete user
 router.delete("/:id", async (req, res) => {
   try {
-
     const deletedUser = await Users.findByIdAndDelete(req.params.id);
 
     if (!deletedUser) {
@@ -69,4 +86,5 @@ router.delete("/:id", async (req, res) => {
     res.status(500).json({ message: "Error deleting user" });
   }
 });
+
 export default router;

@@ -17,6 +17,8 @@ function EventDetails() {
   const [loading, setLoading] = useState(true);
   const [registrationCount, setRegistrationCount] = useState(0);
   const [alreadyRegistered, setAlreadyRegistered] = useState(false);
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [reportReason, setReportReason] = useState("");
 
   const userId = useMemo(() => getUserId(), []);
   const { push } = useToast();
@@ -106,11 +108,89 @@ const fetchEvent = async () => {
     }
   };
 
+const submitReport = async () => {
+  if (!reportReason) return;
+
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  if (!user || !user.id) {
+    alert("User not found. Please login again.");
+    return;
+  }
+
+  try {
+    await fetch("http://localhost:9999/api/reports", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        eventId: event._id,
+        userId: user.id,
+        reason: reportReason,
+      }),
+    });
+
+    alert("Report submitted successfully");
+    setShowReportModal(false);
+    setReportReason("");
+
+  } catch (err) {
+    console.error(err);
+    alert("Error submitting report");
+  }
+};
+
+  const overlayStyle = {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    background: "rgba(0,0,0,0.5)",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 1000,
+  };
+
+  const modalStyle = {
+    background: "#fff",
+    padding: "20px",
+    borderRadius: "10px",
+    width: "350px",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+  };
+
+  const inputStyle = {
+    width: "100%",
+    height: "80px",
+    padding: "10px",
+    borderRadius: "5px",
+    border: "1px solid #ccc",
+  };
+
+  const cancelBtn = {
+    marginRight: "10px",
+    padding: "6px 12px",
+    background: "#6c757d",
+    color: "white",
+    border: "none",
+    borderRadius: "5px",
+  };
+
+  const submitBtn = {
+    padding: "6px 12px",
+    background: "#dc3545",
+    color: "white",
+    border: "none",
+    borderRadius: "5px",
+  };
+
   return (
     <div className="admin-dashboard">
       <div className="admin-section">
         
-        {/* Header */}
         <div className="admin-header">
           <div>
             <h1 className="admin-title">{event.name}</h1>
@@ -120,7 +200,6 @@ const fetchEvent = async () => {
           </div>
         </div>
 
-        {/* Main Content Area */}
         <div className="admin-list-scroll">
           <div className="admin-card">
             <div className="admin-card__identity">
@@ -139,7 +218,7 @@ const fetchEvent = async () => {
   Register Now
 </Link>
               )}
-              
+              <button onClick={() => setShowReportModal(true)}>Report</button>
               <button
                 type="button"
                 className="btn btn--info"
@@ -156,7 +235,7 @@ const fetchEvent = async () => {
                 Back
               </button>
             </div>
-          </div> {/* End admin-card */}
+          </div>
 
           {showMobileCTA && (
             <div className="event-mobile-cta">
@@ -168,9 +247,8 @@ const fetchEvent = async () => {
               </button>
             </div>
           )}
-        </div> {/* End admin-list-scroll */}
+        </div>
 
-        {/* Footer */}
         <div className="admin-footer">
           {isAdmin && (
   <Link to="/admin" className="view-all-btn">
@@ -179,8 +257,34 @@ const fetchEvent = async () => {
 )}
         </div>
 
-      </div> {/* End admin-section */}
-    </div> /* End admin-dashboard */
+      </div>
+
+      {showReportModal && (
+        <div style={overlayStyle}>
+          <div style={modalStyle}>
+            <h3 style={{ marginBottom: "10px" }}>Report Event</h3>
+
+            <textarea
+              placeholder="Enter reason..."
+              value={reportReason}
+              onChange={(e) => setReportReason(e.target.value)}
+              style={inputStyle}
+            />
+
+            <div style={{ marginTop: "15px", textAlign: "right" }}>
+              <button onClick={() => setShowReportModal(false)} style={cancelBtn}>
+                Cancel
+              </button>
+
+              <button onClick={submitReport} style={submitBtn}>
+                Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+    </div>
   );
 }
 

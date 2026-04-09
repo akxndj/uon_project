@@ -3,11 +3,13 @@ dns.setServers(['8.8.8.8', '1.1.1.1']);import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
-
+import reportRouter from "./routers/reportRouter.js";
 import eventRouter from "./routers/eventRouter.js";
 import userRouter from "./routers/userRouter.js";
 import authRouter from "./routers/authRouter.js";
 import registrationRouter from "./routers/registrationRouter.js";
+
+
 
 
 
@@ -16,7 +18,7 @@ dotenv.config();
 const app = express();
 app.use(cors());
 app.use(express.json());
-
+app.use("/api/reports", reportRouter);
 mongoose.connect(process.env.MONGO_URI) .then(() => console.log("database connected successfully"))
                                         .catch(err => console.error("could not connect to db", err));
 

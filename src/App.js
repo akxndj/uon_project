@@ -28,7 +28,7 @@ import CreateEvent from "./pages/CreateEvent";
 import OrganizerEventDetail from "./pages/OrganizerEventDetail";
 import EditEvent from "./pages/EditEvent";
 import AdminEditEvent from "./pages/AdminEditEvent";
-
+import AdminReports from "./pages/AdminReports";
 function App() {
   return (
     <ToastProvider>
@@ -53,6 +53,7 @@ function App() {
                   path="/admin/events/:id"
                   element={<EventDetails />}
                 />
+                <Route path="/admin/reports" element={<AdminReports />} />
 
                 {/* User routes */}
                 <Route path="/home" element={<Home />} />

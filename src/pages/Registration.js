@@ -12,7 +12,8 @@ import ReturnButton from "../components/ReturnButton";
 
 const getUserId = () => {
   if (typeof window === "undefined") return null;
-  return window.localStorage.getItem("user");
+  const user = JSON.parse(localStorage.getItem("user"));
+  return user?.studentId;
 };
 
 function Registration() {
@@ -21,7 +22,7 @@ function Registration() {
   const [registrationCount, setRegistrationCount] = useState(0);
   const [alreadyRegistered, setAlreadyRegistered] = useState(false);
   const navigate = useNavigate();
-  const { id: eventId } = useParams(); // Get eventId from URL (e.g., /register/:id)
+  const { id: eventId } = useParams();
   const userId = useMemo(() => getUserId(), []);
   //const event = useMemo(() => getEventById(eventId), [eventId]);
   const [event, setEvent] = useState(null);
@@ -129,12 +130,15 @@ function Registration() {
   }; */
   const handleRegister = async () => {
     try {
+      const user = JSON.parse(localStorage.getItem("user"));
       const res = await fetch("http://localhost:9999/api/registrations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           eventId,
-          userId,
+          userId: user.studentId,
+          email: user.email,
+          role: user.role
         }),
       });
 

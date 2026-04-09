@@ -1,8 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import "../styles/organizer.css";
-import { getEventById } from "../data/events";
-import { getRegistrationCount } from "../utils/registrationStorage";
+
 import { useToast } from "../context/ToastContext";
 import { useModal } from "../context/ModalContext";
 
@@ -13,26 +12,23 @@ function OrganizerEventDetails() {
   const { confirm } = useModal();
 
   // Find event by id from URL
-  const event = useMemo(() => getEventById(id), [id]);
-  const [participants, setParticipants] = useState(
-    event ? getRegistrationCount(event.id) : 0
-  );
+  const [event, setEventId] = useState([])
+  useEffect(() => { 
+    const fetchEvent = async() => { 
+      try{
+        const res = await fetch(`http://localhost:9999/api/events/${id}`);
+        if(!res.ok) throw new Error("No event with this id found");
+        const data = await res.json();
 
-  useEffect(() => {
-    if (!event) return;
-    const refreshParticipants = () =>
-      setParticipants(getRegistrationCount(event.id));
-
-    refreshParticipants();
-    if (typeof window === "undefined") return undefined;
-    const handleStorage = ({ key }) => {
-      if (key === "eventRegistrations") {
-        refreshParticipants();
+        setEventId(data);
       }
-    };
-    window.addEventListener("storage", handleStorage);
-    return () => window.removeEventListener("storage", handleStorage);
-  }, [event]);
+      catch(err){
+        console.error("No event found", err);
+      }
+    }
+    fetchEvent();
+  }, []);
+
 
   if (!event) {
     return (
@@ -76,7 +72,7 @@ function OrganizerEventDetails() {
               <span>Capacity:</span> {event.capacity}
             </li>
             <li>
-              <span>Registered:</span> {participants}
+              <span>Registered:</span> {event.registered}
             </li>
           </ul>
         </div>
@@ -92,6 +88,29 @@ function OrganizerEventDetails() {
     });
     navigate("/organizer");
   };
+
+  const handleEmail = async() => {
+    const subject = prompt("Enter subject of email");
+    const message = prompt("Enter body of email");
+    try{
+      const res = await fetch(`http://localhost:9999/api/registrations/${id}/email`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({subject, message}),
+      });
+      const data = await res.json();
+      if(!res.ok) throw new Error(data.message);
+      if (data.previewUrl) {
+        window.open(data.previewUrl, "_blank");
+      }
+
+      }
+    catch(error){
+      console.error("Failed to send email", error);
+    }
+
+
+  }
 
   return (
   <div className="admin-dashboard">
@@ -114,7 +133,7 @@ function OrganizerEventDetails() {
               <p><strong>Date:</strong> {event.date}</p>
               <p><strong>Location:</strong> {event.location}</p>
               <p>
-                <strong>Participants:</strong> {participants}/{event.capacity}
+                <strong>Participants:</strong> {event.registered}/{event.capacity}
               </p>
               <p><strong>Maximum Capacity:</strong> {event.capacity}</p>
               <p><strong>Description:</strong> {event.description}</p>
@@ -130,6 +149,9 @@ function OrganizerEventDetails() {
                 onClick={handleDelete}
               >
                 Delete
+              </button>
+              <button className="admin-btn" onClick={handleEmail}>
+                Email Attendees
               </button>
             </div>
 
