@@ -1,12 +1,14 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import "../styles/admin.css";
 import { getRegistrationCount } from "../utils/registrationStorage";
 import { useToast } from "../context/ToastContext";
 import { useModal } from "../context/ModalContext";
 
+
 function AdminEventsPage() {
   const { push } = useToast();
+  const location = useLocation();
   const { confirm } = useModal();
   const [query, setQuery] = useState("");
 const [eventList, setEvents] = useState([]);
@@ -19,6 +21,7 @@ useEffect(() => {
     })
     .catch((err) => console.error(err));
 }, []);
+
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -43,7 +46,34 @@ useEffect(() => {
     window.addEventListener("storage", handleStorage);
     return () => window.removeEventListener("storage", handleStorage);
   }, []);
+useEffect(() => {
+  const params = new URLSearchParams(location.search);
+  const highlightId = params.get("highlight");
 
+  if (!highlightId || loading) return;
+
+  const timer = setTimeout(() => {
+    const target = document.getElementById(`event-${highlightId}`);
+
+    if (target) {
+      target.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+
+      target.style.border = "2px solid #f4b400";
+      target.style.boxShadow = "0 0 20px rgba(244, 180, 0, 0.7)";
+      target.style.transition = "all 0.3s ease";
+
+      setTimeout(() => {
+        target.style.border = "";
+        target.style.boxShadow = "";
+      }, 5000);
+    }
+  }, 500);
+
+  return () => clearTimeout(timer);
+}, [location.search, loading, eventList]);
   // Handle delete confirmation
   const handleDelete = async (id) => {
     const targetEvent = eventList.find((event) => event._id === id);
@@ -199,7 +229,11 @@ try {
       <div className="admin-list-scroll">
         <div className="admin-list">
           {filteredEvents.map((event) => (
-            <div className="admin-card" key={event._id}>
+            <div
+  className="admin-card"
+  key={event._id}
+  id={`event-${event._id}`}
+>
               <div className="admin-card__identity">
                 <strong>{event.name}</strong>
                 <p className="admin-card__meta">

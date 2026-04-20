@@ -11,16 +11,19 @@ function CreateEvent() {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (formData) => {
-
     if (loading) return;
     setLoading(true);
 
     try {
+      const eventId = Date.now().toString();
+      const user = JSON.parse(localStorage.getItem("user"));
 
-      // ❗避免重复 append
-      if (!formData.get("eventId")) {
-        formData.append("eventId", Date.now().toString());
+      if (!user || !user.id) {
+        throw new Error("User not logged in");
       }
+
+      formData.set("eventId", eventId);
+      formData.set("createdBy", user.id);
 
       const response = await fetch("http://localhost:9999/api/events", {
         method: "POST",
@@ -42,7 +45,6 @@ function CreateEvent() {
       navigate("/organizer");
 
     } catch (error) {
-
       console.error(error);
 
       push({
@@ -64,7 +66,7 @@ function CreateEvent() {
 
         <OrganizerEventWizard
           initialData={null}
-          submitLabel={loading ? "Creating..." : "Create Event"} 
+          submitLabel={loading ? "Creating..." : "Create Event"}
           onSubmit={handleSubmit}
         />
 
