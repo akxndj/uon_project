@@ -279,7 +279,6 @@ try {
         </div>
       </div>
 
-      {/* 固定 Footer */}
       <div className="admin-footer">
         <Link to="/admin" className="view-all-btn">
           Back to Dashboard

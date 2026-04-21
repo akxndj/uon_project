@@ -30,7 +30,6 @@ function OrganizerEventDetails() {
   }, []);
 
 
-  // If no event found
   if (!event) {
     return (
       <div className="organizer-page">
@@ -44,12 +43,10 @@ function OrganizerEventDetails() {
     );
   }
 
-  // === Handle Edit ===
   const handleEdit = () => {
     navigate(`/organizer/edit-event/${id}`);
   };
 
-  // === Handle Delete ===
   const handleDelete = async () => {
     const approved = await confirm({
       title: `Delete ${event?.name || "this event"}?`,
@@ -120,7 +117,6 @@ function OrganizerEventDetails() {
     <div className="page-shell">
       <div className="admin-section">
 
-        {/* Header */}
         <div className="admin-header">
           <div>
             <h1 className="admin-title">{event.name}</h1>
@@ -130,7 +126,6 @@ function OrganizerEventDetails() {
           </div>
         </div>
 
-        {/* Scrollable content */}
         <div className="admin-list-scroll">
           <div className="admin-card">
 
@@ -163,7 +158,6 @@ function OrganizerEventDetails() {
           </div>
         </div>
 
-        {/* Footer */}
         <div className="admin-footer">
           <Link to="/organizer" className="view-all-btn">
             ← Back to Dashboard
