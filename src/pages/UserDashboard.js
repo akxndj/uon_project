@@ -271,7 +271,7 @@ function UserDashboard() {
           <div className="user-grid">
             {upcoming.map((event) => {
               const tone = capacityTone(
-                event.registrationCount,
+                event.registered,
                 event.capacity
               );
               return (
@@ -296,14 +296,14 @@ function UserDashboard() {
                     </p>
                     <div className="user-card__capacity">
                       <span>
-                        {event.registrationCount}/{event.capacity} attending
+                        {event.registered}/{event.capacity} attending
                       </span>
                       <div className="capacity-meter">
                         <div
                           className={`capacity-meter__fill capacity-meter__fill--${tone}`}
                           style={{
                             width: `${Math.min(
-                              (event.registrationCount / event.capacity) *
+                              (event.registered / event.capacity) *
                                 100,
                               100
                             ).toFixed(2)}%`,

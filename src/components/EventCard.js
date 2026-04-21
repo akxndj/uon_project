@@ -33,10 +33,10 @@ const EventCard = ({ event }) => {
     included,
     image,
     capacity,
-    registrations = 0,
+    registered,
   } = event;
 
-  const tone = determineTone(registrations, capacity);
+  const tone = determineTone(registered, capacity);
 
   return (
     <article className="event-card">
@@ -80,14 +80,14 @@ const EventCard = ({ event }) => {
 
         <div className="event-card__capacity">
           <span>
-            {registrations}/{capacity} attending
+            {registered}/{capacity} attending
           </span>
           <div className="capacity-bar">
             <div
               className={`capacity-bar__fill capacity-bar__fill--${tone}`}
               style={{
                 width: `${Math.min(
-                  capacity ? (registrations / capacity) * 100 : 0,
+                  capacity ? (registered / capacity) * 100 : 0,
                   100
                 )}%`,
               }}

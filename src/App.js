@@ -29,6 +29,9 @@ import OrganizerEventDetail from "./pages/OrganizerEventDetail";
 import EditEvent from "./pages/EditEvent";
 import AdminEditEvent from "./pages/AdminEditEvent";
 import AdminReports from "./pages/AdminReports";
+import EmailHandler from "./components/EmailHandler";
+import AdminEmail from "./components/AdminEmail";
+
 function App() {
   return (
     <ToastProvider>
@@ -77,6 +80,8 @@ function App() {
                   element={<OrganizerEventDetail />}
                 />
                 <Route path="/organizer/edit-event/:id" element={<EditEvent />} />
+                <Route path = "/events/:id/email" element = {<EmailHandler/>} />
+                <Route path = "/events/:id/emailOrg" element = {<AdminEmail/>} />
               </Routes>
             </main>
             <ToastContainer />

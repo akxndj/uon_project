@@ -13,7 +13,7 @@ const parseDate = (value) => {
 const getUserId = () => {
   if (typeof window === "undefined") return null;
   const user = JSON.parse(localStorage.getItem("user"));
-  return user?.studentId || null;
+  return user?.id || null;
 };
 
 const getStatus = (event) => {
