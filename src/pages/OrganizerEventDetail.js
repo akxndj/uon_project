@@ -92,7 +92,7 @@ function OrganizerEventDetails() {
     navigate("/organizer");
   };
 
-  const handleEmail = async() => {
+  /* const handleEmail = async() => {
     const subject = prompt("Enter subject of email");
     const message = prompt("Enter body of email");
     try{
@@ -113,7 +113,7 @@ function OrganizerEventDetails() {
     }
 
 
-  }
+  } */
 
   return (
   <div className="admin-dashboard">
@@ -155,9 +155,9 @@ function OrganizerEventDetails() {
               >
                 Delete
               </button>
-              <button className="admin-btn" onClick={handleEmail}>
+              <Link to = {`/events/${id}/email`} className = "admin-btn">
                 Email Attendees
-              </button>
+              </Link>
             </div>
 
           </div>

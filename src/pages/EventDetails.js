@@ -214,11 +214,11 @@ const submitReport = async () => {
 
             <div className="event-summary-actions">
               {!alreadyRegistered && !isFull && (
-              <Link to={`/register/${event._id}`} className="btn btn--primary">
-  Register Now
-</Link>
+              <Link to={`/register/${event._id}`} className="btn btn--secondary">
+              Register Now
+              </Link>
               )}
-              <button onClick={() => setShowReportModal(true)}>Report</button>
+              <button onClick={() => setShowReportModal(true)} className="btn btn--info" style={{backgroundColor: "orange"}}>Report</button>
               <button
                 type="button"
                 className="btn btn--info"

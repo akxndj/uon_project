@@ -1,5 +1,6 @@
 import express from "express";
 import Users from "../models/userModel.js";
+import bcrypt from "bcrypt";
 
 const router = express.Router();
 
@@ -9,11 +10,12 @@ router.post("/", async(req, res) => {
     const {email, password} = req.body;
 
     const user = await Users.findOne({email});
+    const match = await bcrypt.compare(password, user.password);
     if(!user)
     {
         return res.status(404).json({message: "Email Invalid"})
     }
-    if(user.password != password)
+    if(!match)
     {
         return res.status(404).json({message: "Password Invalid"})
     }

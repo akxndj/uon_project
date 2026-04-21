@@ -55,7 +55,6 @@ function Login() {
       localStorage.setItem("user", JSON.stringify(data.user));
       localStorage.setItem("role", data.user.role);
 
-      alert("Login Successful");
 
       // Redirect based on role
       if (data.user.role === "admin") {

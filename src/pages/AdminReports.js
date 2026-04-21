@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 function AdminReports() {
   const [reports, setReports] = useState([]);
@@ -158,18 +159,6 @@ function AdminReports() {
     cursor: "pointer",
   };
 
-const emailOrganiser = (email) => {
-  const subject = encodeURIComponent("Reported Event Issue");
-  const body = encodeURIComponent(
-    "Hello, your event has been reported. Please review it."
-  );
-
-  window.open(
-    `https://mail.google.com/mail/?view=cm&fs=1&to=${email}&su=${subject}&body=${body}`,
-    "_blank"
-  );
-};
-
   return (
     <div className="admin-dashboard">
       <div className="admin-section">
@@ -300,17 +289,9 @@ const emailOrganiser = (email) => {
 
                 {organisersMap[report.eventId] &&
                   organisersMap[report.eventId] !== "Unknown Organiser" && (
-                    <button
-                      onClick={() =>
-                        emailOrganiser(organisersMap[report.eventId])
-                      }
-                      style={{
-                        ...btn,
-                        background: "#007bff",
-                      }}
-                    >
-                      Email Organiser
-                    </button>
+                    <Link to = {`/events/${report.eventId}/emailOrg`} className = "btn btn--primary">
+                    Email Organiser
+                    </Link>
                   )}
               </div>
             </div>

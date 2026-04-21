@@ -1,5 +1,6 @@
 import express from "express";
 import Users from "../models/userModel.js";
+import bcrypt from "bcrypt"
 
 const router = express.Router();
 
@@ -51,6 +52,9 @@ router.put("/:id", async (req, res) => {
 // POST /api/Users -> add a new user
 router.post("/", async (req, res) => {
   try {
+    const password = req.body.password;
+    const hashed = await bcrypt.hash(password, 10);
+
     const newUser = new Users({
       firstName: req.body.fName,
       lastName: req.body.lName,
@@ -58,7 +62,7 @@ router.post("/", async (req, res) => {
       email: req.body.email,
       studentId: req.body.stdNo,
       phone: req.body.phone,
-      password: req.body.password,
+      password: hashed,
       role: req.body.role || "user"
     });
 
